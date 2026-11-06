@@ -1,0 +1,2117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hotels in Udaipur | onto.travel (UI prototype)</title>
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@500,700,900&f[]=cabinet-grotesk@800&display=swap" />
+  <style>
+/* Tokens mirror onto.travel's Tailwind theme */
+:root {
+  --page: #fafaf9;
+  --surface: #fff;
+  --highlight: #e7eaf1;
+  --frosted: #ffffffb3;
+  --ink-strong: #111827;
+  --ink: #2c2c2c;
+  --ink-muted: #808080;
+  --line: #0000001f;
+  --line-strong: #111827;
+  --accent: #0f8a63;
+  --accent-soft: #e5f4ee;
+  --green-fill: #a4e081;
+  --focus: #417bff;
+  --shadow-card: 0 .272px .498px rgba(0,0,0,.02), 0 .751px 1.377px rgba(0,0,0,.04), 0 1.809px 3.316px rgba(0,0,0,.05), 0 6px 11px rgba(0,0,0,.07);
+  --shadow-pop: 0 2.2px 2.5px rgba(0,0,0,.02), 0 3px 4px rgba(0,0,0,.03), 0 2px 5px rgba(0,0,0,.04), 0 8px 13px rgba(0,0,0,.06), 0 20px 40px -8px rgba(0,0,0,.12);
+  --r-sm: .5rem;
+  --r-lg: 1rem;
+  --r-xl: 1.25rem;
+  --font-sans: 'Satoshi', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+  --font-heading: 'Cabinet Grotesk', 'Satoshi', ui-sans-serif, system-ui, Arial, sans-serif;
+  --container: 90rem;
+  --header-h: 4.5rem;
+  --ease: cubic-bezier(.2,.7,.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; min-height: 100vh; display: flex; flex-direction: column;
+  background: var(--page); color: var(--ink); font-family: var(--font-sans); font-weight: 500; font-size: 14px; line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+button:disabled { cursor: not-allowed; }
+a { color: inherit; text-decoration: none; }
+p, h1, h2, h3, h4, h5 { margin: 0; }
+svg { flex-shrink: 0; display: block; }
+[hidden] { display: none !important; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+[data-icon] { display: inline-flex; }
+
+.container { width: 100%; max-width: var(--container); margin: 0 auto; padding: 0 16px; }
+@media (min-width: 640px) { .container { padding: 0 24px; } }
+@media (min-width: 1024px) { .container { padding: 0 40px; } }
+
+.h3 { font-family: var(--font-heading); font-size: 1.5rem; line-height: 1.1; letter-spacing: -.01em; font-weight: 800; color: var(--ink-strong); }
+.h4 { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 800; letter-spacing: -.01em; color: var(--ink-strong); }
+
+/* ---------------------------------------------------------------- buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: var(--r-lg); font-weight: 700; font-size: 1rem; padding: 14px 24px; transition: opacity .15s, background-color .15s, border-color .15s; white-space: nowrap; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { opacity: .9; }
+.btn-secondary { background: var(--surface); border: 1px solid var(--line); color: var(--ink-strong); }
+.btn-secondary:hover { background: var(--highlight); }
+.btn-xs { font-size: .8125rem; padding: 6px 12px; border-radius: 999px; }
+.btn-block { width: 100%; }
+.btn-pill { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); padding: 8px 12px; font-size: .875rem; font-weight: 500; color: var(--ink-strong); transition: background-color .15s; }
+.btn-pill:hover { background: var(--highlight); }
+.btn-pill .chev { transition: transform .2s var(--ease); }
+.btn-pill[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.icon-btn { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 18px; font-weight: 700; color: var(--ink-strong); }
+.icon-btn:hover { background: var(--highlight); }
+.link-btn { font-weight: 700; color: var(--accent); font-size: .875rem; padding: 4px 0; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: transparent; transition: text-decoration-color .15s; }
+.link-btn:hover { text-decoration-color: currentColor; }
+.badge { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--accent); color: #fff; font-size: .75rem; font-weight: 700; }
+
+/* ---------------------------------------------------------------- header */
+.topbar { position: sticky; top: 0; z-index: 40; background: var(--page); border-bottom: 1px solid var(--line); }
+.topbar-inner { position: relative; display: flex; align-items: center; gap: 16px; height: var(--header-h); }
+.crumbs { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; font-size: 1.125rem; }
+.logo { font-family: var(--font-heading); font-weight: 800; font-size: 1.6rem; letter-spacing: -.04em; color: var(--ink-strong); line-height: 1; }
+.logo::after { content: ''; display: inline-block; width: 7px; height: 7px; margin-left: 2px; border-radius: 50%; background: var(--accent); }
+.crumb-sep { color: var(--ink-strong); }
+/* Breadcrumb title only slides in once the page heading has scrolled under the header */
+.crumb-tail { display: flex; align-items: center; gap: 8px; min-width: 0; opacity: 0; transform: translateY(10px); pointer-events: none; transition: opacity .25s var(--ease), transform .3s var(--ease); }
+body.title-hidden .crumb-tail { opacity: 1; transform: none; pointer-events: auto; }
+@media (prefers-reduced-motion: reduce) { .crumb-tail { transition: opacity .2s; transform: none; } }
+.crumb-current { color: var(--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+@media (min-width: 768px) { .topbar-actions { flex: 1; } }
+.login-cta { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 18px 0 14px; border-radius: 999px; background: var(--ink-strong); color: #fff; font-weight: 700; font-size: .875rem; transition: opacity .15s, transform .15s var(--ease); }
+.login-cta:hover { opacity: .88; }
+.login-cta:active { transform: scale(.97); }
+.avatar { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 999px; background: var(--accent); color: #fff; font-weight: 700; font-size: 1rem; box-shadow: 0 0 0 2px var(--page), 0 0 0 3px var(--line); }
+.account-menu { right: 0; top: calc(100% + 8px); display: flex; flex-direction: column; padding: 6px; }
+.account-head { display: flex; flex-direction: column; padding: 10px 12px 12px; margin-bottom: 4px; border-bottom: 1px solid var(--line); }
+.account-head small { color: var(--ink-muted); }
+.account-menu [role="menuitem"] { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border-radius: var(--r-sm); text-align: left; color: var(--ink-strong); }
+.account-menu [role="menuitem"]:hover, .account-menu [role="menuitem"]:focus-visible { background: var(--highlight); outline: none; }
+
+/* Airbnb-style stay bar: compact pill that widens when a segment is active */
+.stay-bar { display: none; position: absolute; left: 50%; top: 50%; z-index: 2; transform: translate(-50%, -50%); width: 470px; height: 50px; align-items: center; padding-right: 6px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); box-shadow: var(--shadow-card); transition: width .3s var(--ease), height .3s var(--ease), background-color .2s, box-shadow .2s; }
+.stay-bar:hover { box-shadow: var(--shadow-pop); }
+.sb-seg { flex: 1 1 0; min-width: 0; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 0 18px; border-radius: 999px; text-align: left; cursor: pointer; transition: background-color .15s, box-shadow .2s; }
+.sb-seg[data-seg="when"] { flex-grow: 1.3; }
+body:not(.bar-open) .sb-seg { padding: 0 16px; }
+.sb-label { display: none; font-size: .75rem; font-weight: 700; color: var(--ink-strong); line-height: 1.3; }
+.sb-input, .sb-value { display: block; width: 100%; padding: 0; border: 0; background: transparent; outline: none; font-size: .875rem; font-weight: 700; color: var(--ink-strong); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+.sb-value { font-weight: 500; color: var(--ink-muted); }
+.sb-input::placeholder { color: var(--ink-muted); font-weight: 500; }
+.sb-div { flex-shrink: 0; width: 1px; height: 24px; background: var(--line); transition: opacity .15s; }
+.sb-go { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 38px; height: 38px; border-radius: 999px; background: var(--accent); color: #fff; font-weight: 700; transition: height .3s var(--ease), padding .3s var(--ease), opacity .15s; }
+.sb-go:hover { opacity: .9; }
+.sb-go-label { display: none; }
+
+body.bar-open .stay-bar { width: min(780px, calc(100vw - 48px)); height: 64px; background: var(--highlight); border-color: transparent; box-shadow: var(--shadow-pop); }
+body.bar-open .sb-label { display: block; }
+body.bar-open .sb-input { cursor: text; font-weight: 500; }
+body.bar-open .sb-value { color: var(--ink); }
+body.bar-open .sb-seg:hover { background: #dde1ea; }
+body.bar-open .sb-seg.is-active { background: var(--surface); box-shadow: var(--shadow-pop); }
+body.bar-open .sb-div:has(+ .sb-seg.is-active), body.bar-open .sb-seg.is-active + .sb-div { opacity: 0; }
+body.bar-open .sb-go { height: 48px; padding: 0 20px 0 16px; }
+body.bar-open .sb-go-label { display: inline; }
+body.bar-open .crumb-tail { opacity: 0; }
+.bar-scrim { position: fixed; inset: var(--header-h) 0 0 0; z-index: 38; background: #11182733; animation: fade .2s; }
+
+/* -------------------------------------------------------- layout switcher */
+.layout-switcher { position: fixed; z-index: 70; left: 50%; bottom: 20px; transform: translateX(-50%); display: flex; align-items: center; gap: 4px; padding: 5px; border-radius: 999px; background: #111827; color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,.25); max-width: calc(100vw - 24px); overflow-x: auto; scrollbar-width: none; }
+.layout-switcher-label { padding: 0 10px 0 12px; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: #9ca3af; }
+.layout-switcher button { padding: 8px 14px; border-radius: 999px; font-size: .8125rem; font-weight: 700; white-space: nowrap; color: #d1d5db; transition: background-color .15s, color .15s; }
+.layout-switcher button:hover { color: #fff; background: #ffffff1a; }
+.layout-switcher button[aria-checked="true"] { background: #fff; color: #111827; }
+
+/* -------------------------------------------------------------- quickbar */
+.quickbar { display: none; position: sticky; top: var(--header-h); z-index: 30; background: var(--page); border-bottom: 1px solid var(--line); }
+.quickbar-inner { display: flex; align-items: center; gap: 8px; padding-top: 12px; padding-bottom: 12px; overflow-x: auto; scrollbar-width: none; }
+.qpill { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 8px 14px; font-weight: 700; color: var(--ink-strong); font-size: .875rem; transition: background-color .15s, border-color .15s; }
+.qpill:hover { border-color: var(--line-strong); }
+.qpill svg:last-child { transition: transform .2s var(--ease); }
+.qpill[aria-expanded="true"] svg:last-child { transform: rotate(180deg); }
+.qpill.is-active { background: var(--ink-strong); border-color: var(--ink-strong); color: #fff; }
+.qdivider { width: 1px; height: 24px; background: var(--line); flex-shrink: 0; }
+
+/* ------------------------------------------------------------------ page */
+.page { flex: 1; padding-top: 20px; padding-bottom: 32px; }
+.page-grid { display: grid; gap: 40px; }
+.results { min-width: 0; }
+.results-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
+.results-title { display: flex; align-items: baseline; gap: 12px; min-width: 0; flex-wrap: wrap; }
+.results-count { color: var(--ink-muted); font-size: .875rem; }
+.results-tools { display: flex; align-items: center; gap: 12px; }
+.filters-btn .badge { margin-left: 2px; }
+
+.active-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: -8px 0 20px; }
+.active-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px 6px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: .8125rem; border: 1px solid #0f8a6333; transition: background-color .15s; }
+.active-chip:hover { background: #d3ece2; }
+
+/* --------------------------------------------------------------- dropdown */
+.dropdown { position: relative; }
+.menu { list-style: none; margin: 0; padding: 6px; position: absolute; z-index: 35; min-width: 220px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-pop); animation: pop .16s var(--ease); }
+#sort .menu { right: 0; top: calc(100% + 8px); }
+.menu [role="option"] { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-radius: var(--r-sm); cursor: pointer; font-weight: 500; color: var(--ink-strong); outline: none; }
+.menu [role="option"]:hover, .menu [role="option"]:focus-visible, .menu [aria-selected="true"] { background: var(--highlight); }
+.menu [aria-selected="true"] { font-weight: 700; }
+.menu-empty { padding: 12px; color: var(--ink-muted); }
+@keyframes pop { from { opacity: 0; transform: translateY(-4px) scale(.98); } }
+
+/* ---------------------------------------------------------------- listing */
+.listing { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-items: start; transition: opacity .2s; }
+.listing.is-busy { opacity: .4; }
+@media (min-width: 768px) { .listing { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; } }
+
+.card { position: relative; display: flex; flex-direction: column; overflow: hidden; border-radius: var(--r-xl); border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow-card); transition: box-shadow .2s, transform .2s var(--ease), border-color .2s; }
+.card:hover { box-shadow: var(--shadow-pop); }
+.card.is-hover { border-color: var(--line-strong); }
+.card.flash { animation: flash 1.4s var(--ease); }
+@keyframes flash { 0%, 60% { box-shadow: 0 0 0 3px var(--accent), var(--shadow-pop); } 100% { box-shadow: var(--shadow-card); } }
+.card-media { position: relative; z-index: 2; padding: 8px; }
+.carousel { position: relative; overflow: hidden; border-radius: var(--r-lg); aspect-ratio: 3 / 2; background: var(--highlight); }
+.carousel-track { display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; overscroll-behavior-x: contain; scrollbar-width: none; }
+.carousel-track::-webkit-scrollbar { display: none; }
+.carousel-slide { flex: 0 0 100%; height: 100%; scroll-snap-align: start; }
+.carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.carousel-btn { position: absolute; bottom: 12px; z-index: 3; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 999px; border: 1px solid var(--line); background: var(--frosted); backdrop-filter: blur(10px); color: var(--ink-strong); box-shadow: var(--shadow-card); opacity: 0; transition: opacity .2s, background-color .15s; }
+.carousel-btn:hover { background: var(--surface); }
+.carousel-btn.prev { left: 8px; }
+.carousel-btn.next { right: 8px; }
+.carousel:hover .carousel-btn, .carousel-btn:focus-visible { opacity: 1; }
+@media (hover: none) { .carousel-btn { display: none; } }
+.carousel-dots { position: absolute; inset: auto 0 8px; z-index: 3; display: flex; justify-content: center; gap: 6px; pointer-events: none; }
+.dot { pointer-events: auto; width: 6px; height: 6px; border-radius: 999px; background: #ffffff99; transition: width .2s, background-color .2s; }
+.dot:hover { background: #ffffffcc; }
+.dot.is-active { width: 16px; background: #fff; }
+
+.star-badge { position: absolute; left: 20px; top: 20px; z-index: 3; pointer-events: none; display: inline-flex; padding: 4px 5px; border-radius: 999px; background-color: var(--green-fill); background-image: repeating-linear-gradient(135deg, #ffffff40 0 2px, transparent 2px 5px); }
+.star-badge > span { display: flex; align-items: center; justify-content: center; gap: 2px; height: 26px; padding: 0 6px; border-radius: 999px; background: var(--accent); color: #fff; }
+.fav { position: absolute; right: 20px; top: 20px; z-index: 3; display: none; place-items: center; width: 36px; height: 36px; border-radius: 999px; background: var(--frosted); backdrop-filter: blur(10px); color: var(--ink-strong); transition: transform .15s, color .15s; }
+.fav:hover { transform: scale(1.08); }
+.fav.is-on { color: #e11d48; }
+.fav.is-on svg { fill: currentColor; }
+
+.card-body { display: flex; flex: 1; flex-direction: column; gap: 24px; padding: 8px 24px 24px; }
+.card-main { display: flex; flex: 1; flex-direction: column; gap: 12px; }
+.card-title-row { display: flex; align-items: flex-start; gap: 16px; font-size: 1rem; }
+.card-title { flex: 1; min-width: 0; font-size: 1rem; font-weight: 700; color: var(--ink-strong); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card-title a::after { content: ''; position: absolute; inset: 0; z-index: 1; }
+.card-title a:hover { text-decoration: underline; text-underline-offset: 3px; }
+.card-loc { white-space: nowrap; font-size: .875rem; font-weight: 700; color: var(--ink-muted); }
+.card-rating { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.card-rating b { display: flex; align-items: center; gap: 2px; color: var(--ink); }
+.card-rating b svg { color: var(--ink-strong); }
+.card-rating span { color: var(--ink-muted); }
+.card-tags { display: flex; flex-wrap: wrap; gap: 8px; max-height: 26px; overflow: hidden; padding-right: 8px; }
+.tag { display: inline-flex; align-items: center; gap: 4px; border-radius: var(--r-sm); border: 1px solid var(--line); background: var(--page); padding: 4px 8px; font-size: .75rem; color: var(--ink); white-space: nowrap; }
+.card-perks { display: none; flex-wrap: wrap; gap: 12px; font-size: .8125rem; color: var(--ink-muted); }
+.perk { display: inline-flex; align-items: center; gap: 4px; }
+.perk-good { color: var(--accent); font-weight: 700; }
+.card-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 16px; border-top: 1px dashed var(--line); }
+.card-per { display: flex; flex-direction: column; gap: 4px; min-width: 0; color: var(--ink-muted); font-size: .875rem; }
+.card-total { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; color: var(--ink-muted); font-size: .875rem; }
+.card-total .price { font-size: 1.125rem; font-weight: 700; line-height: 1; color: var(--ink-strong); }
+.card-cta { display: none; position: relative; z-index: 2; }
+
+.skeleton { padding: 8px; gap: 12px; }
+.sk-media { aspect-ratio: 3/2; border-radius: var(--r-lg); }
+.sk-line { height: 16px; margin: 4px 16px; border-radius: 6px; }
+.sk-line.short { width: 40%; margin-bottom: 20px; }
+.sk-media, .sk-line { background: linear-gradient(90deg, var(--highlight) 0%, #f3f4f7 50%, var(--highlight) 100%); background-size: 200% 100%; animation: shimmer 1.1s linear infinite; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+.empty { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 48px 16px; }
+.empty-stamp { transform: rotate(-6deg); border: 3px solid #dc2626; color: #dc2626; border-radius: 12px; padding: 8px 16px; font-family: var(--font-heading); font-weight: 800; font-size: 1.4rem; line-height: 1; letter-spacing: .06em; opacity: .8; margin-bottom: 16px; }
+.empty-title { font-size: 1.25rem; font-weight: 700; color: var(--ink-strong); }
+.empty-copy { color: var(--ink-muted); margin-bottom: 16px; }
+
+/* --------------------------------------------------------------- sidebar */
+.sidebar { display: flex; flex-direction: column; }
+.sidebar-scroll { display: flex; flex-direction: column; gap: 32px; }
+.drawer-head, .drawer-foot { display: none; }
+.section-title { margin-bottom: 16px; padding: 0 16px; }
+.stay-fields { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+.field { display: flex; align-items: center; gap: 16px; width: 100%; min-height: 60px; padding: 8px 16px; text-align: left; border-radius: var(--r-xl); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-card); color: var(--ink-strong); transition: border-color .15s; }
+.field:hover, .field[aria-expanded="true"], .field-text:focus-within, .field.is-active { border-color: var(--line-strong); }
+.field-text { cursor: text; }
+.field-text input { flex: 1; min-width: 0; border: 0; padding: 0; background: transparent; font-size: 1rem; font-weight: 700; color: var(--ink-strong); outline: none; }
+.field-text input::placeholder { color: var(--ink-muted); font-weight: 500; }
+.field-clear { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 999px; color: var(--ink-muted); }
+.field-clear:hover { background: var(--highlight); color: var(--ink-strong); }
+.field-value { display: flex; flex: 1; min-width: 0; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 1rem; }
+.field .chev { color: var(--ink-strong); transition: transform .2s var(--ease); }
+.field[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.tag-outline { border: 1px solid var(--line); border-radius: var(--r-sm); padding: 2px 4px; font-size: .875rem; font-weight: 700; }
+.pill-soft { border-radius: var(--r-sm); background: var(--highlight); padding: 2px 8px; font-size: .875rem; font-weight: 700; }
+
+.popover { position: absolute; z-index: 36; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-xl); box-shadow: var(--shadow-pop); animation: pop .16s var(--ease); }
+.mini-field { display: flex; flex-direction: column; gap: 2px; border: 1px solid var(--line); border-radius: var(--r-lg); padding: 8px 12px; background: var(--surface); transition: border-color .15s; min-width: 0; }
+.mini-field:focus-within { border-color: var(--line-strong); }
+.mini-field > span { font-size: .75rem; color: var(--ink-muted); }
+.mini-field input, .mini-field select { border: 0; padding: 0; background: transparent; font-weight: 700; color: var(--ink-strong); outline: none; width: 100%; min-width: 0; }
+.quick-nights { display: flex; flex-wrap: wrap; gap: 6px; }
+.pop-error { color: #dc2626; font-size: .8125rem; }
+.stepper-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.stepper-row > div:first-child { display: flex; flex-direction: column; color: var(--ink-strong); }
+.stepper-row small { color: var(--ink-muted); }
+.stepper { display: flex; align-items: center; gap: 12px; }
+.stepper button { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 999px; border: 1px solid var(--line); font-size: 18px; color: var(--ink-strong); transition: border-color .15s; }
+.stepper button:hover:not(:disabled) { border-color: var(--line-strong); }
+.stepper button:disabled { opacity: .35; }
+.stepper output { min-width: 16px; text-align: center; font-weight: 700; color: var(--ink-strong); }
+.child-ages { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.child-ages:empty { display: none; }
+
+.filters-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.filters-title { display: flex; align-items: baseline; gap: 10px; }
+.applied { color: var(--accent); font-size: .875rem; }
+
+/* accordion: open item becomes a card, chevron rotates, height animates via grid rows */
+.acc-item { padding: 16px; border: 1px solid transparent; border-radius: var(--r-xl); transition: background-color .2s var(--ease), border-color .2s var(--ease), box-shadow .2s var(--ease), margin .2s var(--ease); }
+.acc-item.divided { border-top-color: var(--line); border-radius: 0; }
+.acc-item.is-open { background: var(--surface); border-color: var(--line); box-shadow: var(--shadow-card); margin: 4px 0; }
+.acc-trigger { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 8px; text-align: left; font-size: 1rem; font-weight: 700; color: var(--ink-strong); }
+.acc-meta { display: flex; align-items: center; gap: 8px; }
+.acc-count { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: .75rem; }
+.acc-trigger svg { transition: transform .2s var(--ease); }
+.acc-item.is-open .acc-trigger svg { transform: rotate(180deg); }
+.acc-panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .2s var(--ease); }
+.acc-item.is-open .acc-panel { grid-template-rows: 1fr; }
+.acc-inner { overflow: hidden; }
+.acc-content { margin-top: 12px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+@media (prefers-reduced-motion: reduce) { .acc-item, .acc-panel, .acc-trigger svg { transition: none; } }
+
+.chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; text-align: left; padding: 8px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-strong); font-weight: 500; transition: background-color .15s, border-color .15s, color .15s; }
+.chip:hover:not(:disabled) { border-color: var(--line-strong); }
+.chip.is-selected { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+.chip:disabled { opacity: .4; }
+.chip-count { color: var(--ink-muted); font-size: .75rem; font-weight: 500; }
+.chip.is-selected .chip-count { color: var(--accent); }
+.chip-sm { padding: 5px 10px; font-size: .8125rem; }
+
+.range { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+.histogram { display: flex; align-items: flex-end; gap: 3px; height: 44px; padding: 0 10px; }
+.bar { flex: 1; border-radius: 3px 3px 0 0; background: var(--highlight); transition: background-color .15s; }
+.bar.in { background: var(--accent); opacity: .55; }
+.range-track { position: relative; height: 24px; margin: 0 10px; }
+.range-track::before { content: ''; position: absolute; left: 0; right: 0; top: 11px; height: 3px; border-radius: 3px; background: var(--highlight); }
+.range-fill { position: absolute; top: 11px; height: 3px; border-radius: 3px; background: var(--accent); }
+.range-track input[type="range"] { position: absolute; left: -10px; right: -10px; width: calc(100% + 20px); top: 0; height: 24px; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; }
+.range-track input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; pointer-events: auto; width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 1px solid var(--line-strong); box-shadow: var(--shadow-card); cursor: grab; }
+.range-track input[type="range"]::-moz-range-thumb { pointer-events: auto; width: 20px; height: 20px; border-radius: 50%; background: #fff; border: 1px solid var(--line-strong); box-shadow: var(--shadow-card); cursor: grab; }
+.range-track input[type="range"]::-webkit-slider-runnable-track { background: none; }
+.range-track input[type="range"]:focus-visible { outline: none; }
+.range-track input[type="range"]:focus-visible::-webkit-slider-thumb { outline: 2px solid var(--focus); outline-offset: 2px; }
+.range-inputs { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
+.range-dash { color: var(--ink-muted); }
+
+.switch-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: 100%; cursor: pointer; }
+.switch-row > span { display: flex; flex-direction: column; color: var(--ink-strong); }
+.switch-row small { color: var(--ink-muted); }
+.switch { -webkit-appearance: none; appearance: none; flex-shrink: 0; width: 44px; height: 26px; border-radius: 999px; background: #d1d5db; position: relative; cursor: pointer; transition: background-color .2s; margin: 0; }
+.switch::after { content: ''; position: absolute; left: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s var(--ease); }
+.switch:checked { background: var(--accent); }
+.switch:checked::after { transform: translateX(18px); }
+
+/* ----------------------------------------------------------- quick popover */
+.quick-pop { position: fixed; z-index: 45; padding: 20px; display: flex; flex-direction: column; gap: 16px; max-height: min(70vh, 560px); }
+.quick-pop-body { overflow: auto; display: flex; flex-direction: column; gap: 12px; }
+.quick-pop-body > div { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
+.quick-pop-title { font-size: 1rem; font-weight: 700; color: var(--ink-strong); }
+.quick-pop-foot { display: flex; justify-content: space-between; border-top: 1px solid var(--line); padding-top: 14px; }
+
+
+/* ---------------------------------------------------------------- footer */
+.footer { margin-top: 64px; border-top: 1px solid var(--line); color: var(--ink-muted); padding-bottom: 72px; }
+.footer-inner { display: flex; flex-direction: column; gap: 8px; padding-top: 24px; padding-bottom: 24px; }
+@media (min-width: 640px) { .footer-inner { flex-direction: row; align-items: center; justify-content: space-between; } }
+.footer-left { display: flex; align-items: center; gap: 16px; }
+.vr { width: 1px; height: 16px; background: var(--line); }
+.footer-links { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+.footer a:hover { color: var(--ink-strong); }
+
+/* ------------------------------------------------------- overlays/toast */
+.scrim { position: fixed; inset: 0; z-index: 50; background: #11182766; backdrop-filter: blur(2px); animation: fade .2s; }
+@keyframes fade { from { opacity: 0; } }
+.login-dialog { position: fixed; z-index: 60; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(420px, calc(100vw - 24px)); padding: 32px 28px 28px; background: var(--surface); border-radius: var(--r-xl); border: 1px solid var(--line); box-shadow: var(--shadow-pop); animation: fade .18s; }
+.login-close { position: absolute; right: 16px; top: 16px; }
+.login-step { display: flex; flex-direction: column; gap: 14px; }
+.login-copy { color: var(--ink-muted); margin-top: -4px; }
+.login-copy b { color: var(--ink-strong); }
+.login-field input { font-size: 1rem; }
+.login-or { display: flex; align-items: center; gap: 12px; color: var(--ink-muted); font-size: .8125rem; }
+.login-or::before, .login-or::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+.g-mark { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: conic-gradient(#ea4335 0 25%, #fbbc05 0 50%, #34a853 0 75%, #4285f4 0); color: #fff; font-size: .75rem; font-weight: 900; }
+.login-legal { font-size: .75rem; color: var(--ink-muted); text-align: center; }
+.login-legal a { text-decoration: underline; }
+.login-back { align-self: flex-start; }
+.otp { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.otp input { width: 100%; height: 52px; text-align: center; font-size: 1.25rem; font-weight: 700; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); outline: none; transition: border-color .15s; }
+.otp input:focus { border-color: var(--line-strong); }
+.search-dialog { position: fixed; z-index: 60; left: 50%; top: 12vh; transform: translateX(-50%); width: min(640px, calc(100vw - 24px)); animation: pop .18s var(--ease); }
+.search-box { background: var(--surface); border-radius: var(--r-xl); box-shadow: var(--shadow-pop); overflow: hidden; border: 1px solid var(--line); }
+.search-input-row { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--line); color: var(--ink-strong); }
+.search-input-row input { flex: 1; border: 0; outline: none; font-size: 1.0625rem; font-weight: 700; background: transparent; }
+.search-input-row input::placeholder { color: var(--ink-muted); font-weight: 500; }
+kbd { font: inherit; font-size: .75rem; color: var(--ink-muted); border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; }
+.search-results { max-height: 50vh; overflow: auto; padding: 8px; }
+.search-group { padding: 10px 12px 6px; font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-muted); }
+.search-item { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 12px; border-radius: var(--r-lg); text-align: left; color: var(--ink-strong); }
+.search-item span { display: flex; flex-direction: column; min-width: 0; }
+.search-item small { color: var(--ink-muted); }
+.search-item.is-active, .search-item:hover { background: var(--highlight); }
+.search-empty { padding: 24px; text-align: center; color: var(--ink-muted); }
+.toast { position: fixed; z-index: 80; left: 50%; bottom: 84px; transform: translate(-50%, 8px); opacity: 0; padding: 12px 18px; border-radius: 999px; background: var(--ink-strong); color: #fff; font-weight: 700; box-shadow: var(--shadow-pop); transition: opacity .2s, transform .2s var(--ease); }
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ===================================================================
+   Drawer mode: used by the Gallery layout, and every layout < 1024px
+   =================================================================== */
+body[data-layout="gallery"] .sidebar {
+  position: fixed; z-index: 55; top: 0; right: 0; bottom: 0; width: min(420px, 100vw); max-height: none;
+  background: var(--page); box-shadow: -10px 0 40px rgba(0,0,0,.15);
+  transform: translateX(105%); transition: transform .28s var(--ease), visibility 0s .28s; visibility: hidden;
+}
+body[data-layout="gallery"].drawer-open .sidebar { transform: none; visibility: visible; transition: transform .28s var(--ease); }
+body[data-layout="gallery"] .sidebar .drawer-head, body[data-layout="gallery"] .sidebar .drawer-foot { display: flex; }
+.drawer-head { align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--line); }
+.drawer-foot { gap: 12px; justify-content: space-between; padding: 16px 20px; border-top: 1px solid var(--line); background: var(--surface); }
+.drawer-foot .btn-primary { flex: 1; }
+body[data-layout="gallery"] .sidebar-scroll { flex: 1; overflow-y: auto; padding: 20px 16px 32px; }
+body[data-layout="gallery"] .filters-btn { display: none; }
+
+@media (max-width: 1023px) {
+  .sidebar {
+    position: fixed; z-index: 55; top: 0; right: 0; bottom: 0; width: min(420px, 100vw);
+    background: var(--page); box-shadow: -10px 0 40px rgba(0,0,0,.15);
+    transform: translateX(105%); transition: transform .28s var(--ease), visibility 0s .28s; visibility: hidden;
+  }
+  body.drawer-open .sidebar { transform: none; visibility: visible; transition: transform .28s var(--ease); }
+  .sidebar .drawer-head, .sidebar .drawer-foot { display: flex; }
+  .sidebar-scroll { flex: 1; overflow-y: auto; padding: 20px 16px 32px; }
+}
+@media (min-width: 1024px) {
+  body[data-layout="classic"] .filters-btn, body[data-layout="list"] .filters-btn, body[data-layout="listgrid"] .filters-btn { display: none; }
+}
+
+/* ===================================================================
+   A · Classic — live page look: 2-col cards, sidebar moved to the left
+   =================================================================== */
+@media (min-width: 1024px) {
+  body[data-layout="classic"] .page-grid { grid-template-columns: 332px minmax(0, 1fr); column-gap: 64px; }
+  body[data-layout="classic"] .sidebar { order: -1; }
+  body[data-layout="classic"] .results-head { flex-wrap: nowrap; padding: 0 24px; }
+  body[data-layout="classic"] .active-filters { padding: 0 24px; }
+  body[data-layout="classic"] .sidebar,
+  body[data-layout="list"] .sidebar,
+  body[data-layout="listgrid"] .sidebar { position: sticky; top: calc(var(--header-h) + 8px); align-self: start; max-height: calc(100vh - 6rem); overflow-y: auto; margin: 0 -12px; padding: 0 12px 24px; scrollbar-width: thin; }
+}
+body[data-layout="classic"] .results-count { display: none; }
+
+/* ===================================================================
+   B · List — filters on the left, horizontal cards, explicit CTA
+   =================================================================== */
+@media (min-width: 1024px) {
+  body[data-layout="list"] .page-grid { grid-template-columns: 300px minmax(0, 1fr); column-gap: 40px; }
+  body[data-layout="list"] .sidebar { order: -1; }
+}
+body[data-layout="list"] .listing { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+@media (min-width: 768px) {
+  body[data-layout="list"] .card { flex-direction: row; }
+  body[data-layout="list"] .card-media { flex: 0 0 min(38%, 320px); min-height: 236px; }
+  body[data-layout="list"] .carousel { position: absolute; inset: 8px; aspect-ratio: auto; }
+  body[data-layout="list"] .card-body { padding: 20px 24px 20px 16px; gap: 16px; }
+  body[data-layout="list"] .card-title { font-size: 1.125rem; }
+  body[data-layout="list"] .card-foot { border-top-style: solid; }
+  body[data-layout="list"] .card-total { margin-left: auto; }
+  body[data-layout="list"] .card-cta { display: inline-flex; padding: 12px 20px; }
+}
+body[data-layout="list"] .card-perks { display: flex; }
+body[data-layout="list"] .fav { display: grid; }
+body[data-layout="list"] .card-tags { max-height: none; }
+
+/* ===================================================================
+   D · List, grid — B's filters on the right, live onto.travel cards, 2 per row
+   =================================================================== */
+@media (min-width: 1024px) {
+  body[data-layout="listgrid"] .page-grid { grid-template-columns: minmax(0, 1fr) 300px; column-gap: 40px; }
+}
+.live-star-badge { position: absolute; left: 20px; top: 20px; z-index: 3; pointer-events: none; display: inline-flex; align-items: center; padding: 4px 6px; border-radius: var(--r-sm); background: var(--surface); box-shadow: var(--shadow-card); color: var(--ink-strong); }
+.live-star-badge .laurel { opacity: .3; }
+.live-star-badge .laurel.flip { transform: scaleX(-1); }
+.live-star-badge b { margin-left: -6px; transform: translateY(-1px); font-family: var(--font-heading); font-size: .875rem; font-weight: 800; line-height: 1; }
+.live-star-badge .tiny-star { margin-left: 1px; transform: translateY(-2px); }
+.live-star-badge .laurel:last-child { margin-left: -8px; }
+
+/* ===================================================================
+   Gallery header: compact stay bar + quick filter bar
+   =================================================================== */
+body[data-layout="gallery"] .quickbar { display: block; }
+@media (min-width: 900px) {
+  body[data-layout="gallery"] .stay-bar { display: flex; }
+  body[data-layout="gallery"] .crumbs { flex: 0 1 auto; }
+  body[data-layout="gallery"] .topbar-inner { justify-content: space-between; }
+  body[data-layout="gallery"] .topbar-actions { flex: 0 0 auto; }
+}
+
+/* ===================================================================
+   C · Gallery — dense image-first grid, filters in drawer
+   =================================================================== */
+/* At most 3 per row; drops to 2 / 1 as cards would go below 300px */
+body[data-layout="gallery"] .listing { grid-template-columns: repeat(auto-fill, minmax(max(300px, calc((100% - 56px) / 3)), 1fr)); gap: 36px 28px; }
+body[data-layout="gallery"] .card { border: 0; background: transparent; box-shadow: none; overflow: visible; }
+body[data-layout="gallery"] .card:hover { box-shadow: none; }
+body[data-layout="gallery"] .card-media { padding: 0; }
+body[data-layout="gallery"] .carousel { aspect-ratio: 1 / 1; border-radius: var(--r-xl); }
+body[data-layout="gallery"] .star-badge { left: 12px; top: 12px; transform: scale(.85); transform-origin: top left; }
+body[data-layout="gallery"] .fav { display: grid; right: 12px; top: 12px; }
+body[data-layout="gallery"] .card-body { padding: 12px 2px 0; gap: 6px; }
+body[data-layout="gallery"] .card-main { gap: 4px; }
+body[data-layout="gallery"] .card-title-row { font-size: .9375rem; }
+body[data-layout="gallery"] .card-title { -webkit-line-clamp: 1; }
+body[data-layout="gallery"] .card-title .card-loc { display: none; }
+body[data-layout="gallery"] .card-tags { margin-top: 4px; }
+body[data-layout="gallery"] .card-foot { margin-top: 6px; padding-top: 12px; }
+body[data-layout="gallery"] .listing { align-items: stretch; }
+body[data-layout="gallery"] .card-perks { display: flex; gap: 8px; }
+body[data-layout="gallery"] .card-perks .perk:not(.perk-good) { display: none; }
+body[data-layout="gallery"] .card.flash { animation: none; }
+body[data-layout="gallery"] .card.flash .carousel { animation: flash 1.4s var(--ease); }
+body.drawer-open .layout-switcher, body.search-open .layout-switcher, body.login-open .layout-switcher { opacity: 0; pointer-events: none; }
+.layout-switcher { transition: opacity .2s; }
+
+/* ---------------------------------------------- Where / When / Who sheet */
+.stay-sheet { position: fixed; z-index: 58; overflow: auto; padding: 24px; border-radius: 28px; overscroll-behavior: contain; }
+.sheet-title { margin: 0 0 8px 8px; font-size: .75rem; font-weight: 700; color: var(--ink-muted); }
+.sheet-empty { padding: 16px 8px; color: var(--ink-muted); }
+.dest-list { display: flex; flex-direction: column; }
+.dest-item { display: flex; align-items: center; gap: 16px; padding: 8px; border-radius: var(--r-lg); text-align: left; transition: background-color .12s; }
+.dest-item:hover, .dest-item.is-active { background: var(--highlight); }
+.dest-tile { flex-shrink: 0; display: grid; place-items: center; width: 56px; height: 56px; border-radius: 12px; color: var(--tone); background: color-mix(in srgb, var(--tone) 12%, #fff); }
+.dest-text { display: flex; flex-direction: column; min-width: 0; }
+.dest-text b { display: flex; align-items: center; gap: 8px; color: var(--ink-strong); }
+.dest-text em { font-style: normal; font-size: .6875rem; font-weight: 700; padding: 1px 6px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+.dest-text small { color: var(--ink-muted); font-size: .875rem; }
+
+.cal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.cal-head .icon-btn:disabled { opacity: .3; }
+.cal-status { font-weight: 700; color: var(--ink-strong); text-align: center; }
+.cal-months { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.stay-sheet.one-month .cal-months { grid-template-columns: 1fr; }
+.stay-sheet.one-month .month + .month { display: none; }
+.month-name { margin-bottom: 12px; text-align: center; font-weight: 700; color: var(--ink-strong); }
+.dow, .days { display: grid; grid-template-columns: repeat(7, 1fr); }
+.dow span { padding-bottom: 8px; text-align: center; font-size: .75rem; font-weight: 700; color: var(--ink-muted); }
+.day { position: relative; aspect-ratio: 1; display: grid; place-items: center; border-radius: 999px; font-size: .875rem; font-weight: 700; color: var(--ink-strong); }
+.day:hover:not(:disabled):not(.is-start):not(.is-end) { box-shadow: inset 0 0 0 1.5px var(--ink-strong); }
+.day:disabled { color: #c7c7c7; text-decoration: line-through; cursor: default; }
+.day.in-range { border-radius: 0; background: var(--highlight); }
+.day.is-start, .day.is-end { isolation: isolate; color: #fff; }
+.day.is-start::after, .day.is-end::after { content: ''; position: absolute; inset: 0; z-index: -1; border-radius: 999px; background: var(--ink-strong); }
+/* half-cell connectors so the range reads as one continuous band */
+.day.has-range { border-radius: 0; background: linear-gradient(90deg, transparent 50%, var(--highlight) 50%); }
+.day.is-end { border-radius: 0; background: linear-gradient(90deg, var(--highlight) 50%, transparent 50%); }
+.cal-foot { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
+
+.stay-sheet[data-type="who"] { padding: 8px 28px 20px; }
+.who-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+.who-row:last-of-type { border-bottom: 0; }
+.who-row > div:first-child { display: flex; flex-direction: column; color: var(--ink-strong); }
+.who-row small { color: var(--ink-muted); }
+.stay-sheet .child-ages { padding-top: 8px; }
+
+</style>
+  </head>
+<body data-layout="listgrid">
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a class="logo" href="#" aria-label="onto.travel home">onto</a>
+        <span class="crumb-tail" aria-hidden="true">
+          <span class="crumb-sep">/</span>
+          <a class="crumb-current" href="#" data-action="go-results">Hotels in <span data-bind="destination">Udaipur</span></a>
+        </span>
+      </nav>
+
+      <!-- Airbnb-style stay bar (Gallery layout): expands when a segment is active -->
+      <div class="stay-bar" id="stay-bar" role="search" aria-label="Edit your stay">
+        <label class="sb-seg" data-seg="where">
+          <span class="sb-label">Where</span>
+          <input class="sb-input stay-dest" type="text" placeholder="Search destinations" autocomplete="off" aria-label="Where" data-sheet-anchor="where" />
+        </label>
+        <span class="sb-div" aria-hidden="true"></span>
+        <button type="button" class="sb-seg" data-seg="when" data-action="open-sheet" data-sheet="when" aria-haspopup="dialog" aria-expanded="false">
+          <span class="sb-label">When</span><span class="sb-value" data-bind="bar-dates"></span>
+        </button>
+        <span class="sb-div" aria-hidden="true"></span>
+        <button type="button" class="sb-seg" data-seg="who" data-action="open-sheet" data-sheet="who" aria-haspopup="dialog" aria-expanded="false">
+          <span class="sb-label">Who</span><span class="sb-value" data-bind="bar-guests"></span>
+        </button>
+        <button type="button" class="sb-go" data-action="run-search" aria-label="Search"><span data-icon="search"></span><span class="sb-go-label">Search</span></button>
+      </div>
+
+      <div class="topbar-actions">
+        <button type="button" class="login-cta" data-action="open-login" aria-haspopup="dialog">
+          <span data-icon="user"></span><span>Log in</span>
+        </button>
+        <div class="dropdown account" id="account" hidden>
+          <button type="button" class="avatar" data-action="toggle-account" aria-haspopup="menu" aria-expanded="false" aria-label="Account menu"><span data-bind="avatar">R</span></button>
+          <div class="menu account-menu" role="menu" hidden>
+            <div class="account-head"><b data-bind="account-name">Traveller</b><small data-bind="account-email"></small></div>
+            <button type="button" role="menuitem" data-action="account-item" data-msg="Trips page isn’t part of this prototype">My trips</button>
+            <button type="button" role="menuitem" data-action="account-item" data-msg="Saved stays page isn’t part of this prototype">Saved stays <span class="chip-count" data-bind="saved-count">0</span></button>
+            <button type="button" role="menuitem" data-action="logout">Log out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+
+  <!-- Quick filter bar, used by the Gallery layout -->
+  <div class="quickbar">
+    <div class="container quickbar-inner" id="quickbar"></div>
+  </div>
+
+  <main class="container page">
+    <div class="page-grid">
+      <section class="results" aria-labelledby="results-heading">
+        <div class="results-head">
+          <div class="results-title">
+            <h2 id="results-heading" class="h3">Hotels in <span data-bind="destination">Udaipur</span></h2>
+            <p class="results-count" data-bind="count" aria-live="polite"></p>
+          </div>
+          <div class="results-tools">
+            <button type="button" class="btn-pill filters-btn" data-action="open-drawer" data-focus="filters">
+              <span data-icon="sliders"></span>Filters<span class="badge" data-bind="applied-badge" hidden></span>
+            </button>
+            <div class="dropdown" id="sort">
+              <button type="button" class="btn-pill" aria-haspopup="listbox" aria-expanded="false" data-action="toggle-sort" aria-label="Sort by">
+                <span data-icon="sort"></span><span data-bind="sort-label">Recommended</span><span data-icon="chevron-down" class="chev"></span>
+              </button>
+              <ul class="menu" role="listbox" hidden></ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="active-filters" id="active-filters"></div>
+
+        <div class="listing-wrap">
+          <div class="listing" id="listing" aria-busy="false"></div>
+          <div class="empty" id="empty" hidden>
+            <div class="empty-stamp" aria-hidden="true">NO<br/>STAYS</div>
+            <p class="empty-title">No stays match these filters</p>
+            <p class="empty-copy">Try removing a filter or widening your price range.</p>
+            <button type="button" class="btn btn-secondary" data-action="clear-all">Clear all filters</button>
+          </div>
+        </div>
+      </section>
+
+      <aside class="sidebar" id="sidebar" aria-label="Your stay and filters">
+        <div class="drawer-head">
+          <h3 class="h4">Search &amp; filters</h3>
+          <button type="button" class="icon-btn" data-action="close-drawer" aria-label="Close"><span data-icon="x"></span></button>
+        </div>
+
+        <div class="sidebar-scroll">
+          <section class="stay" id="stay" aria-labelledby="stay-heading">
+            <h4 id="stay-heading" class="h4 section-title">Your stay</h4>
+            <div class="stay-fields">
+              <label class="field field-text" data-sheet-wrap="where">
+                <span data-icon="pin"></span>
+                <input class="stay-dest" type="text" value="Udaipur" placeholder="Where to?" autocomplete="off" aria-label="Where to?" data-sheet-anchor="where" />
+                <button type="button" class="field-clear" data-action="clear-destination" aria-label="Clear destination"><span data-icon="x"></span></button>
+              </label>
+              <button type="button" class="field" data-action="open-sheet" data-sheet="when" aria-haspopup="dialog" aria-expanded="false">
+                <span data-icon="calendar"></span>
+                <span class="field-value"><b data-bind="dates">3 Nov - 5 Nov</b><span class="tag-outline" data-bind="nights">2N</span></span>
+                <span data-icon="chevron-down" class="chev"></span>
+              </button>
+              <button type="button" class="field" data-action="open-sheet" data-sheet="who" aria-haspopup="dialog" aria-expanded="false">
+                <span data-icon="users"></span>
+                <span class="field-value" data-bind="guests-chips"></span>
+                <span data-icon="chevron-down" class="chev"></span>
+              </button>
+            </div>
+            <button type="button" class="btn btn-primary btn-block" data-action="run-search"><span data-icon="search"></span><span>Search</span></button>
+          </section>
+
+          <section class="filters" id="filters" aria-labelledby="filters-heading">
+            <div class="filters-head section-title">
+              <div class="filters-title">
+                <h4 id="filters-heading" class="h4">Filters</h4>
+                <span class="applied" data-bind="applied" hidden></span>
+              </div>
+              <button type="button" class="btn btn-secondary btn-xs" data-action="clear-all" data-bind="clear-all" hidden>Clear all</button>
+            </div>
+            <div class="accordion" id="accordion"></div>
+          </section>
+        </div>
+
+        <div class="drawer-foot">
+          <button type="button" class="btn btn-secondary" data-action="clear-all">Clear all</button>
+          <button type="button" class="btn btn-primary" data-action="close-drawer" data-bind="show-results">Show stays</button>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-left"><span>© 2026 onto.travel</span><span class="vr" aria-hidden="true"></span><a href="#">Blogs</a></div>
+      <nav class="footer-links"><a href="#">Contact Us</a><a href="#">Privacy Policy</a><a href="#">Terms of Service</a><a href="#">Cancellation Policy</a><a href="#">Refund Policy</a></nav>
+    </div>
+  </footer>
+
+  <div class="scrim" id="scrim" hidden></div>
+
+  <!-- Quick filter popover (Gallery layout) -->
+  <div class="popover quick-pop" id="quick-pop" role="dialog" hidden>
+    <div class="quick-pop-body" id="quick-pop-body"></div>
+    <div class="quick-pop-foot">
+      <button type="button" class="btn btn-secondary btn-xs" data-action="quick-clear">Clear</button>
+      <button type="button" class="btn btn-primary btn-xs" data-action="quick-close" data-bind="show-results">Show stays</button>
+    </div>
+  </div>
+
+  <!-- Shared Where / When / Who sheet, anchored under whichever field opened it -->
+  <div class="popover stay-sheet" id="stay-sheet" role="dialog" aria-label="Edit your stay" hidden></div>
+  <div class="bar-scrim" id="bar-scrim" hidden></div>
+
+  <!-- Login -->
+  <div class="login-dialog" id="login-dialog" role="dialog" aria-modal="true" aria-labelledby="login-title" hidden>
+    <button type="button" class="icon-btn login-close" data-action="close-login" aria-label="Close"><span data-icon="x"></span></button>
+    <form class="login-step" id="login-email-step" novalidate>
+      <h3 id="login-title" class="h3">Log in or sign up</h3>
+      <p class="login-copy">Save stays, track bookings and get member-only prices.</p>
+      <label class="mini-field login-field"><span>Email</span><input type="email" id="login-email" placeholder="you@example.com" autocomplete="email" required /></label>
+      <p class="pop-error" id="login-email-error" hidden>Enter a valid email address.</p>
+      <button type="submit" class="btn btn-primary btn-block">Continue</button>
+      <div class="login-or"><span>or</span></div>
+      <button type="button" class="btn btn-secondary btn-block" data-action="login-google"><span class="g-mark" aria-hidden="true">G</span>Continue with Google</button>
+      <p class="login-legal">By continuing you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+    </form>
+    <form class="login-step" id="login-code-step" novalidate hidden>
+      <button type="button" class="link-btn login-back" data-action="login-back">← Back</button>
+      <h3 class="h3">Check your inbox</h3>
+      <p class="login-copy">We sent a 6-digit code to <b data-bind="login-sent-to"></b>. (Prototype: any 6 digits work.)</p>
+      <div class="otp" id="otp"><input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 1" /><input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 2" /><input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 3" /><input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 4" /><input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 5" /><input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 6" /></div>
+      <p class="pop-error" id="login-code-error" hidden>Enter all 6 digits.</p>
+      <button type="submit" class="btn btn-primary btn-block">Verify &amp; log in</button>
+      <button type="button" class="link-btn" data-action="login-resend">Resend code</button>
+    </form>
+  </div>
+
+  <!-- Cmd+K search -->
+  <div class="search-dialog" id="search-dialog" role="dialog" aria-modal="true" aria-label="Search" hidden>
+    <div class="search-box">
+      <div class="search-input-row">
+        <span data-icon="search"></span>
+        <input id="search-input" type="text" placeholder="Search hotels, areas or destinations" autocomplete="off" aria-controls="search-results" />
+        <kbd>Esc</kbd>
+      </div>
+      <div class="search-results" id="search-results" role="listbox"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script>
+// Dummy data for the listings prototype. Nothing here talks to a backend.
+const IMG = 'https://rukmini-ct.flixcart.com/w_1200,f_auto,q_auto/ct-hotel-images/places/hotels/cms/';
+
+window.HOTELS = [
+  {
+    id: 'bamboo-saa', name: 'Bamboo Saa Resort & Spa - Udaipur', locality: 'Eklavya Colony',
+    stars: 5, rating: 4.8, reviews: 12000, perNight: 13759, type: 'Resort', chain: null,
+    tags: ['Transfers', 'Food and Drink', 'Accessibility', 'Reception Services'],
+    facilities: ['Pool', 'Spa', 'Free WiFi', 'Restaurant', 'Airport shuttle', 'Parking'],
+    houseRules: ['Couple friendly', 'Smoking allowed'], freeCancellation: true, recommended: 1,
+    images: [IMG + '2358/2358756/images/image_2358756_a11dd4c5-298a-4ee1-87e4-a2a3f059e94e.png', IMG + '2358/2358756/images/02bb60d0_z.jpg'],
+  },
+  {
+    id: 'oberoi-udaivilas', name: 'The Oberoi Udaivilas', locality: 'Pichola',
+    stars: 5, rating: 4.8, reviews: 7400, perNight: 78784, type: 'Resort', chain: 'Oberoi',
+    tags: ['Spa and Wellness', 'Parking', 'General', 'Outdoors'],
+    facilities: ['Pool', 'Spa', 'Free WiFi', 'Restaurant', 'Gym', 'Lake view', 'Parking'],
+    houseRules: ['Couple friendly'], freeCancellation: false, recommended: 2,
+    images: [IMG + '4535/4535704/images/image_4535704_fcbeb1c9-1bb0-4c3c-a410-f0059caf3aee.jpeg', IMG + '4535/4535704/images/image_4535704_4115ef79-f9d5-413f-bde0-93cd2d7cb5b8.png'],
+  },
+  {
+    id: 'hotel-lakend', name: 'Hotel Lakend', locality: 'Ambamata',
+    stars: 5, rating: 4.4, reviews: 6300, perNight: 16149, type: 'Hotel', chain: null,
+    tags: ['Transfers', 'Food and Drink', 'Accessibility', 'Spa and Wellness'],
+    facilities: ['Pool', 'Spa', 'Free WiFi', 'Restaurant', 'Lake view', 'Kids club'],
+    houseRules: ['Pet friendly', 'Couple friendly'], freeCancellation: true, recommended: 3,
+    images: [IMG + '7449/744932/images/5311aec1_z_proc.jpg', IMG + '7449/744932/images/image_744932_00b26310-9744-4df3-86e0-61b8422dc12a.jpeg'],
+  },
+  {
+    id: 'trident', name: 'Trident Udaipur', locality: 'Pichola',
+    stars: 5, rating: 4.5, reviews: 4300, perNight: 18285, type: 'Hotel', chain: 'Oberoi',
+    tags: ['Food and Drink', 'Cleaning Services', 'Reception Services', 'Accessibility'],
+    facilities: ['Pool', 'Spa', 'Free WiFi', 'Restaurant', 'Gym', 'Lake view', 'Parking'],
+    houseRules: ['Couple friendly'], freeCancellation: true, recommended: 4,
+    images: [IMG + '4151/41517/images/image_41517_90cea3c0-ae34-4452-a16a-1e535f0eb1eb_proc.jpeg', IMG + '4151/41517/images/w5934h3958x0y0-10c01e41_z_proc.jpg'],
+  },
+  {
+    id: 'ramada', name: 'Ramada by Wyndham Udaipur Resort and Spa', locality: 'Eklavya Colony',
+    stars: 5, rating: 4.3, reviews: 6100, perNight: 9989, type: 'Resort', chain: 'Wyndham',
+    tags: ['Reception Services', 'Cleaning Services', 'General', 'Accessibility'],
+    facilities: ['Pool', 'Spa', 'Free WiFi', 'Restaurant', 'Gym', 'Kids club', 'Parking'],
+    houseRules: ['Couple friendly', 'Smoking allowed'], freeCancellation: true, recommended: 5,
+    images: [IMG + '3936/3936657/images/dc14ad9a_z_proc.jpg', IMG + '3936/3936657/images/image_3936657_a0f46715-a12c-49ba-a0bb-e27e4908de35_proc.jpeg'],
+  },
+  {
+    id: 'swaroop-vilas', name: 'Swaroop Vilas - Lake Facing Boutique Hotel', locality: 'Ambamata',
+    stars: 4, rating: 4.5, reviews: 7200, perNight: 14476, type: 'Boutique', chain: null,
+    tags: ['General', 'Parking', 'Cleaning Services', 'Reception Services'],
+    facilities: ['Pool', 'Free WiFi', 'Restaurant', 'Lake view', 'Parking'],
+    houseRules: ['Couple friendly'], freeCancellation: false, recommended: 6,
+    images: [IMG + '5142/51425/images/image_51425_093e27da-3c04-4f52-9a57-1b0d23d90da8.jpeg', IMG + '5142/51425/images/image_51425_15dbd46d-3f04-4961-b0bd-751de30459f3.jpeg'],
+  },
+  {
+    id: 'amantra-shilpi', name: 'Amantra Shilpi Resort', locality: 'Karwada',
+    stars: 4, rating: 4.5, reviews: 5000, perNight: 8367, type: 'Resort', chain: null,
+    tags: ['Parking', 'Outdoors', 'Reception Services', 'Spa and Wellness'],
+    facilities: ['Pool', 'Spa', 'Free WiFi', 'Restaurant', 'Kids club', 'Parking'],
+    houseRules: ['Pet friendly'], freeCancellation: true, recommended: 7,
+    images: [IMG + '4153/41530/images/IMG_4949_qTkNhL.jpg', IMG + '4153/41530/images/image_41530_1f9a10df-c479-4813-b03b-391109186608.jpeg'],
+  },
+  {
+    id: 'essentia', name: 'Essentia Luxury Resort and Spa', locality: 'Adarsh Nagar',
+    stars: 5, rating: 4.6, reviews: 1400, perNight: 11578, type: 'Resort', chain: null,
+    tags: [],
+    facilities: ['Pool', 'Spa', 'Free WiFi', 'Restaurant', 'Gym'],
+    houseRules: ['Couple friendly'], freeCancellation: false, recommended: 8,
+    images: [IMG + '4290/4290858/images/image_4290858_34569589-b4cf-470b-a22a-dd80da9a5944.jpeg', IMG + '4290/4290858/images/image_4290858_f8a2bc51-9fc6-49c1-8ad3-8c4a25ff2174.jpeg'],
+  },
+  {
+    id: 'pax-grand-blue', name: 'Pax Grand Blue', locality: 'Shivaji Nagar',
+    stars: 4, rating: 4.7, reviews: 3000, perNight: 4566, type: 'Hotel', chain: null,
+    tags: ['Parking', 'Accessibility', 'Reception Services', 'General'],
+    facilities: ['Free WiFi', 'Restaurant', 'Parking'],
+    houseRules: ['Couple friendly', 'Pet friendly'], freeCancellation: true, recommended: 9,
+    images: [IMG + '4284/4284528/images/60bdf10bcef882a9ea809ae1dfa0d775_proc.jpg', IMG + '4284/4284528/images/image_4284528_e551b3ac-70c6-4396-b442-bebbf4880e3d.jpg'],
+  },
+  {
+    id: 'justa-ssatva', name: 'juSTa Ssatva Resort & Convention Centre', locality: 'Gordhan Vilas Rural',
+    stars: 5, rating: 4.6, reviews: 1300, perNight: 9128, type: 'Resort', chain: 'juSTa',
+    tags: ['Bedroom', 'Outdoors', 'Food and Drink', 'Internet Services'],
+    facilities: ['Pool', 'Free WiFi', 'Restaurant', 'Gym', 'Kids club', 'Parking'],
+    houseRules: ['Smoking allowed'], freeCancellation: true, recommended: 10,
+    images: [IMG + '4020/4020338/images/f81bfe66_z_proc.jpg', IMG + '4020/4020338/images/ffd99237_z_proc.jpg'],
+  },
+  {
+    id: 'the-sierra', name: 'The Sierra - By The Lake', locality: 'Pichola',
+    stars: 4, rating: 4.6, reviews: 2700, perNight: 6046, type: 'Boutique', chain: null,
+    tags: ['Outdoors', 'Food and Drink', 'Internet Services', 'Parking'],
+    facilities: ['Free WiFi', 'Restaurant', 'Lake view'],
+    houseRules: ['Couple friendly', 'Pet friendly'], freeCancellation: false, recommended: 11,
+    images: [IMG + '3974/3974010/images/image_3974010_4ae8e0c3-ed05-41d0-9566-df81156bc70a.jpeg', IMG + '3974/3974010/images/image_3974010_a6c1f21c-bcd4-4e29-908a-bcbb0714be77.png'],
+  },
+  {
+    id: 'bhairavgarh', name: 'Bhairavgarh Palace Udaipur', locality: 'Bhuwana',
+    stars: 4, rating: 4.3, reviews: 5200, perNight: 6741, type: 'Heritage', chain: null,
+    tags: ['Reception Services', 'Business Facilities', 'Safety and Security', 'Spa and Wellness'],
+    facilities: ['Pool', 'Spa', 'Free WiFi', 'Restaurant', 'Parking'],
+    houseRules: ['Couple friendly', 'Smoking allowed'], freeCancellation: true, recommended: 12,
+    images: [IMG + '7092/709263/images/a283caf20efc9f668799403b0486b8a2_proc.jpg', IMG + '7092/709263/images/2bb58be9_z_proc.jpg'],
+  },
+];
+
+window.DESTINATIONS = [
+  { name: 'Udaipur', region: 'Rajasthan, India', blurb: 'City of lakes and palaces', icon: 'palace', tone: '#c2410c' },
+  { name: 'Jaipur', region: 'Rajasthan, India', blurb: 'For sights like Hawa Mahal', icon: 'palace', tone: '#db2777' },
+  { name: 'Jodhpur', region: 'Rajasthan, India', blurb: 'The blue city under Mehrangarh', icon: 'palace', tone: '#2563eb' },
+  { name: 'Goa', region: 'India', blurb: 'Popular beach destination', icon: 'beach', tone: '#0891b2' },
+  { name: 'Munnar', region: 'Kerala, India', blurb: 'Tea hills and misty mornings', icon: 'mountain', tone: '#15803d' },
+  { name: 'Rishikesh', region: 'Uttarakhand, India', blurb: 'Great for a weekend getaway', icon: 'mountain', tone: '#7c3aed' },
+  { name: 'Dubai', region: 'United Arab Emirates', blurb: 'Skyline, souks and desert safaris', icon: 'building', tone: '#b45309' },
+  { name: 'Bali', region: 'Indonesia', blurb: 'Beaches, temples and rice terraces', icon: 'beach', tone: '#0d9488' },
+];
+
+</script>
+  <script>window.ONTO_CONFIG = { layout: 'listgrid', noPdp: true };</script>
+  <script>
+(() => {
+  'use strict';
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const HOTELS = window.HOTELS;
+  const DESTINATIONS = window.DESTINATIONS;
+  // Set by build_plp.py for the standalone PLP: one fixed layout, no hotel page.
+  const CONFIG = window.ONTO_CONFIG || {};
+  const LAYOUTS = CONFIG.layout ? [CONFIG.layout] : ['classic', 'list', 'gallery', 'listgrid'];
+
+  /* ------------------------------------------------------------------ icons */
+  const ICONS = {
+    search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    'chevron-down': '<path d="m6 9 6 6 6-6"/>',
+    'chevron-left': '<path d="m15 18-6-6 6-6"/>',
+    'chevron-right': '<path d="m9 18 6-6-6-6"/>',
+    x: '<path d="M18 6 6 18M6 6l12 12"/>',
+    star: '<path d="m12 3 2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 17l-5.4 2.8 1.1-6.1-4.5-4.3 6.1-.8z" fill="currentColor" stroke="none"/>',
+    pin: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+    calendar: '<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6.5 6.5 0 0 1 3.5 6"/>',
+    sliders: '<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+    sort: '<path d="M7 4v16M3 16l4 4 4-4M17 20V4M13 8l4-4 4 4"/>',
+    heart: '<path d="M12 20s-7.5-4.6-9.2-9.4C1.6 7 4 4 7.2 4c2 0 3.6 1.1 4.8 2.8C13.2 5.1 14.8 4 16.8 4 20 4 22.4 7 21.2 10.6 19.5 15.4 12 20 12 20z"/>',
+    check: '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+    wifi: '<path d="M2 8.5a15 15 0 0 1 20 0M5 12a10 10 0 0 1 14 0M8.5 15.5a5 5 0 0 1 7 0"/><circle cx="12" cy="19" r="1" fill="currentColor"/>',
+    pool: '<path d="M2 18c2 0 2-1.5 4-1.5s2 1.5 4 1.5 2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5M8 15V5a2 2 0 0 1 4 0M16 15V5a2 2 0 0 0-4 0M8 9h8"/>',
+    spa: '<path d="M12 21c-5 0-8-3-8-7 3 0 6 1.5 8 4 2-2.5 5-4 8-4 0 4-3 7-8 7z"/><path d="M12 18c-2-3-2-8 0-13 2 5 2 10 0 13z"/>',
+    food: '<path d="M6 3v8a2 2 0 0 0 2 2v8M10 3v8a2 2 0 0 1-2 2M8 3v6M17 21V3c-2 1-3 4-3 7h3"/>',
+    car: '<path d="M5 16V11l2-5h10l2 5v5M3 16h18v3H3zM5 11h14"/><circle cx="7.5" cy="16" r="1.5"/><circle cx="16.5" cy="16" r="1.5"/>',
+    parking: '<rect x="4" y="3" width="16" height="18" rx="3"/><path d="M10 17V8h3a2.5 2.5 0 0 1 0 5h-3"/>',
+    dumbbell: '<path d="M6 7v10M3 9.5v5M18 7v10M21 9.5v5M6 12h12"/>',
+    water: '<path d="M2 9c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 15c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2"/>',
+    smile: '<circle cx="12" cy="12" r="9"/><path d="M8.5 14.5s1.2 1.8 3.5 1.8 3.5-1.8 3.5-1.8M9 9.5h.01M15 9.5h.01"/>',
+    access: '<circle cx="12" cy="4.5" r="1.5"/><path d="M5 8l7 1 7-1M12 9v5l-3 7M12 14l3 7"/>',
+    bell: '<path d="M4 18h16M6 18a6 6 0 0 1 12 0M12 9V7M10 7h4"/>',
+    sparkle: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    nav: '<path d="m3 11 18-8-8 18-2-8z"/>',
+    mountain: '<path d="m2 20 7-12 4 6 3-4 6 10z"/>',
+    palace: '<path d="M4 21V11h16v10M2 21h20M8 11V8a4 4 0 0 1 8 0v3M12 4V2M10 21v-4a2 2 0 0 1 4 0v4"/>',
+    beach: '<path d="M12 12 7 22M3 12a9 9 0 0 1 18 0zM2 22h20"/>',
+    share: '<path d="M12 3v12M7 8l5-5 5 5M5 14v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/>',
+    grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+    expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+    bed: '<path d="M3 18V6M3 14h18v4M21 18v-4a3 3 0 0 0-3-3h-8v3"/><circle cx="7" cy="11" r="1.6"/>',
+    shield: '<path d="M12 3 5 6v5c0 4.5 3 8.3 7 10 4-1.7 7-5.5 7-10V6z"/><path d="m9 12 2 2 4-4"/>',
+    user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+    building: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M10 21v-4h4v4"/>',
+  };
+  const icon = (name, size = 16) =>
+    `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
+  const hydrateIcons = (root = document) =>
+    $$('[data-icon]', root).forEach((el) => { if (!el.firstElementChild) el.innerHTML = icon(el.dataset.icon, +el.dataset.size || 16); });
+
+  const TAG_ICONS = { 'Food and Drink': 'food', 'Internet Services': 'wifi', Transfers: 'car', Parking: 'parking', 'Spa and Wellness': 'spa', Accessibility: 'access', 'Reception Services': 'bell', 'Cleaning Services': 'sparkle' };
+  const FACILITY_ICONS = { Pool: 'pool', Spa: 'spa', 'Free WiFi': 'wifi', Restaurant: 'food', 'Airport shuttle': 'car', Gym: 'dumbbell', 'Lake view': 'water', 'Kids club': 'smile', Parking: 'parking' };
+
+  /* --------------------------------------------------------------- helpers */
+  const inr = (n) => '₹' + Math.round(n).toLocaleString('en-IN');
+  const inrShort = (n) => (n >= 100000 ? '₹' + (n / 100000).toFixed(1).replace(/\.0$/, '') + 'L' : n >= 1000 ? '₹' + (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, '') + 'k' : '₹' + n);
+  const compact = (n) => (n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(n));
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const uniq = (a) => [...new Set(a)];
+  const DAY = 864e5;
+  const parseDate = (s) => new Date(s + 'T00:00:00');
+  const isoDate = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  const fmtDay = (s) => parseDate(s).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  const nightsOf = (st) => Math.max(1, Math.round((parseDate(st.checkOut) - parseDate(st.checkIn)) / DAY));
+  const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+
+  /* ---------------------------------------------------------- filter model */
+  const priceMin = Math.floor(Math.min(...HOTELS.map((h) => h.perNight)) / 1000) * 1000;
+  const priceMax = Math.ceil(Math.max(...HOTELS.map((h) => h.perNight)) / 1000) * 1000;
+  const PRICE_STEP = 500;
+
+  const SORTS = [
+    { value: 'RECOMMENDED', label: 'Recommended', fn: (a, b) => a.recommended - b.recommended },
+    { value: 'PRICE_ASC', label: 'Price - low to high', fn: (a, b) => a.perNight - b.perNight },
+    { value: 'PRICE_DESC', label: 'Price - high to low', fn: (a, b) => b.perNight - a.perNight },
+    { value: 'USER_RATING', label: 'Guest rating', fn: (a, b) => b.rating - a.rating || b.reviews - a.reviews },
+    { value: 'HOTEL_RATING', label: 'Star rating', fn: (a, b) => b.stars - a.stars || b.rating - a.rating },
+  ];
+
+  // mode "any": hotel matches if it has ANY selected option; "all": must have ALL.
+  const GROUPS = [
+    { id: 'price', title: 'Price per night', kind: 'range', quick: 'Price' },
+    { id: 'stars', title: 'Star rating', kind: 'multi', mode: 'any', quick: 'Star rating',
+      options: [5, 4, 3].map((v) => ({ value: String(v), label: `${v} star` })), get: (h) => [String(h.stars)] },
+    { id: 'rating', title: 'Guest rating', kind: 'single', quick: 'Guest rating',
+      options: [{ value: '0', label: 'Any' }, { value: '4', label: '4+ Very good' }, { value: '4.5', label: '4.5+ Excellent' }, { value: '4.7', label: '4.7+ Exceptional' }] },
+    { id: 'cancel', title: 'Free cancellation', kind: 'toggle', quick: 'Free cancellation' },
+    { id: 'types', title: 'Property type', kind: 'multi', mode: 'any', quick: 'Property type',
+      options: uniq(HOTELS.map((h) => h.type)).sort().map((v) => ({ value: v, label: v })), get: (h) => [h.type] },
+    { id: 'facilities', title: 'Facilities', kind: 'multi', mode: 'all', quick: 'Facilities', limit: 6,
+      options: uniq(HOTELS.flatMap((h) => h.facilities)).map((v) => ({ value: v, label: v, icon: FACILITY_ICONS[v] })), get: (h) => h.facilities },
+    { id: 'chains', title: 'Chains', kind: 'multi', mode: 'any',
+      options: uniq(HOTELS.map((h) => h.chain).filter(Boolean)).sort().map((v) => ({ value: v, label: v })), get: (h) => (h.chain ? [h.chain] : []) },
+    { id: 'houseRules', title: 'House rules', kind: 'multi', mode: 'all',
+      options: uniq(HOTELS.flatMap((h) => h.houseRules)).sort().map((v) => ({ value: v, label: v })), get: (h) => h.houseRules },
+  ];
+  const groupById = Object.fromEntries(GROUPS.map((g) => [g.id, g]));
+
+  const emptyFilters = () => ({
+    price: [priceMin, priceMax], rating: 0, cancel: false,
+    stars: new Set(), types: new Set(), facilities: new Set(), chains: new Set(), houseRules: new Set(),
+  });
+
+  const initialStay = { destination: 'Udaipur', checkIn: '2026-11-03', checkOut: '2026-11-05', adults: 2, children: 2, childAges: [4, 9], rooms: 1 };
+
+  const state = {
+    layout: 'classic',
+    sort: 'RECOMMENDED',
+    query: '',
+    stay: structuredClone(initialStay), // applied
+    draft: structuredClone(initialStay), // being edited in "Your stay"
+    filters: emptyFilters(),
+    open: new Set(['price', 'stars']),
+    expanded: new Set(),
+    favourites: new Set(),
+    user: null,
+  };
+
+  const isGroupActive = (id, f = state.filters) => {
+    const g = groupById[id];
+    if (g.kind === 'range') return f.price[0] > priceMin || f.price[1] < priceMax;
+    if (g.kind === 'single') return f.rating > 0;
+    if (g.kind === 'toggle') return f.cancel;
+    return f[id].size > 0;
+  };
+  const groupAppliedCount = (id) => {
+    const g = groupById[id];
+    if (g.kind === 'multi') return state.filters[id].size;
+    return isGroupActive(id) ? 1 : 0;
+  };
+  const appliedCount = () => GROUPS.reduce((n, g) => n + groupAppliedCount(g.id), 0);
+
+
+  function matches(h, f = state.filters, except = null) {
+    if (except !== 'price' && (h.perNight < f.price[0] || h.perNight > f.price[1])) return false;
+    if (except !== 'rating' && f.rating && h.rating < f.rating) return false;
+    if (except !== 'cancel' && f.cancel && !h.freeCancellation) return false;
+    for (const g of GROUPS) {
+      if (g.kind !== 'multi' || g.id === except || !f[g.id].size) continue;
+      const vals = g.get(h);
+      const sel = [...f[g.id]];
+      if (g.mode === 'all' ? !sel.every((v) => vals.includes(v)) : !sel.some((v) => vals.includes(v))) return false;
+    }
+    if (state.query) {
+      const q = state.query.toLowerCase();
+      if (!(`${h.name} ${h.locality} ${h.type}`.toLowerCase().includes(q))) return false;
+    }
+    return true;
+  }
+
+  // How many stays you'd see if this option were picked (given every other filter).
+  function optionCount(g, value) {
+    return HOTELS.filter((h) => {
+      if (!matches(h, state.filters, g.id)) return false;
+      if (g.kind === 'single') return h.rating >= +value;
+      if (g.kind === 'toggle') return h.freeCancellation;
+      const vals = g.get(h);
+      if (g.mode === 'all') return [...state.filters[g.id], value].every((v) => vals.includes(v));
+      return vals.includes(value);
+    }).length;
+  }
+
+  const results = () => HOTELS.filter((h) => matches(h)).sort(SORTS.find((s) => s.value === state.sort).fn);
+
+  /* ------------------------------------------------------------- rendering */
+  const starBadge = (n) =>
+    `<span class="star-badge" role="img" aria-label="${n}-star hotel"><span>${Array.from({ length: n }, () => icon('star', 12)).join('')}</span></span>`;
+
+  // D · List, grid copies the live onto.travel card: laurel star badge, duotone rating star, no save/perks/CTA.
+  const LAUREL = '<path d="M183.27 0 L183.15 0.02 C182.05 1.36 178.64 3.98 177.23 5.18 C173.95 8 170.74 10.91 167.61 13.89 C145.25 35.52 135.3 65.27 148.96 94.22 C150.94 98.43 153.03 101.89 155.63 105.73 C155.26 107.27 154.52 109.15 154.02 110.67 C146.27 134.09 132.77 156.51 116.2 174.68 C111.41 180 106.29 185.03 100.88 189.73 C82.46 205.73 66.58 214.92 47.63 222.57 C37.72 226.57 27.5 229.72 17.07 232.01 C15.04 232.46 12.22 233.15 10.2 233.48 C10.74 235.53 11.19 238.67 11.57 240.81 L13.74 253.07 C16.59 252.45 19.56 251.98 22.38 251.32 C37.02 247.96 51.26 243.07 64.87 236.72 C68.35 235.14 71.81 233.29 75.21 231.54 C77.21 230.51 80.51 228.36 82.46 227.59 C95.16 245.43 114.42 256.02 136.44 256 C138.2 256 143.43 255.42 144.73 255.7 L155.69 253.77 C157.84 252.77 161.24 252.12 163.58 251.36 C169.42 249.45 174.92 247.02 180.48 244.42 C183.16 243.15 185.97 241.68 188.69 240.55 C187.75 239 186.33 237.06 185.28 235.55 C182.89 232.06 180.41 228.64 177.83 225.28 C169.32 214.01 156.88 203.12 143.65 197.71 C138.03 195.48 132.16 193.95 126.16 193.17 C126.63 192.74 127.06 192.26 127.49 191.79 C129.72 189.32 132.04 186.9 134.22 184.39 C136.69 181.53 138.97 178.46 141.49 175.64 C143.89 177.17 146.39 179.08 148.81 180.49 C159.64 186.84 171.9 190.14 184.53 189.62 C204.86 188.79 221.72 178.79 236.8 166 C238.62 164.44 240.43 162.87 242.23 161.29 C243.37 160.29 244.78 159.11 245.8 158.01 C239.97 153.5 234.6 148.65 228.45 144.43 C212.76 133.65 194.21 126.73 174.85 129.26 C172.42 129.57 170.2 130.05 167.81 130.54 C169.27 127.39 170.55 123.44 171.89 120.17 C172.73 118.11 173.95 113.23 174.98 111.49 C175.19 111.14 179.61 107.81 180.35 107.19 C191.83 97.66 200.94 84.04 203.68 69.31 C203.96 67.83 204.44 65.74 204.54 64.28 C204.67 62.21 204.96 59.81 204.97 57.76 C205.06 43.56 200.74 30.37 194.22 17.89 C193.22 15.97 191.91 13.88 190.82 11.99 C189.28 9.35 187.68 6.74 186.02 4.16 C185.36 3.1 184.04 0.91 183.27 0 Z"></path>';
+  const liveStarBadge = (n) =>
+    `<span class="live-star-badge" role="img" aria-label="${n}-star hotel"><svg class="laurel flip" viewBox="0 0 256 256" width="17" height="17" fill="currentColor" aria-hidden="true">${LAUREL}</svg><b>${n}</b><svg class="tiny-star" viewBox="0 0 256 256" width="8" height="8" fill="currentColor" aria-hidden="true"><path d="M234.29,114.85l-45,38.83L203,211.75a16.4,16.4,0,0,1-24.5,17.82L128,198.49,77.47,229.57A16.4,16.4,0,0,1,53,211.75l13.76-58.07-45-38.83A16.46,16.46,0,0,1,31.08,86l59-4.76,22.76-55.08a16.36,16.36,0,0,1,30.27,0l22.75,55.08,59,4.76a16.46,16.46,0,0,1,9.37,28.86Z"></path></svg><svg class="laurel" viewBox="0 0 256 256" width="17" height="17" fill="currentColor" aria-hidden="true">${LAUREL}</svg></span>`;
+  const LIVE_RATING_STAR = '<svg viewBox="0 0 256 256" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M229.06,108.79l-48.7,42,14.88,62.79a8.4,8.4,0,0,1-12.52,9.17L128,189.09,73.28,222.74a8.4,8.4,0,0,1-12.52-9.17l14.88-62.79-48.7-42A8.46,8.46,0,0,1,31.73,94L95.64,88.8l24.62-59.6a8.36,8.36,0,0,1,15.48,0l24.62,59.6L224.27,94A8.46,8.46,0,0,1,229.06,108.79Z" opacity="0.2"></path><path d="M239.18,97.26A16.38,16.38,0,0,0,224.92,86l-59-4.76L143.14,26.15a16.36,16.36,0,0,0-30.27,0L90.11,81.23,31.08,86a16.46,16.46,0,0,0-9.37,28.86l45,38.83L53,211.75a16.38,16.38,0,0,0,24.5,17.82L128,198.49l50.53,31.08A16.4,16.4,0,0,0,203,211.75l-13.76-58.07,45-38.83A16.43,16.43,0,0,0,239.18,97.26Zm-15.34,5.47-48.7,42a8,8,0,0,0-2.56,7.91l14.88,62.8a.37.37,0,0,1-.17.48c-.18.14-.23.11-.38,0l-54.72-33.65a8,8,0,0,0-8.38,0L69.09,215.94c-.15.09-.19.12-.38,0a.37.37,0,0,1-.17-.48l14.88-62.8a8,8,0,0,0-2.56-7.91l-48.7-42c-.12-.1-.23-.19-.13-.5s.18-.27.33-.29l63.92-5.16A8,8,0,0,0,103,91.86l24.62-59.61c.08-.17.11-.25.35-.25s.27.08.35.25L153,91.86a8,8,0,0,0,6.75,4.92l63.92,5.16c.15,0,.24,0,.33.29S224,102.63,223.84,102.73Z"></path></svg>';
+
+  function cardHTML(h) {
+    const st = state.stay;
+    const nights = nightsOf(st);
+    const total = h.perNight * nights * st.rooms;
+    const fav = state.favourites.has(h.id);
+    const live = state.layout === 'listgrid';
+    return `
+<article class="card" data-id="${h.id}">
+  <div class="card-media">
+    <div class="carousel" data-index="0">
+      <div class="carousel-track">
+        ${h.images.map((src, i) => `<div class="carousel-slide"><img src="${src}" alt="${esc(h.name)} photo ${i + 1}" loading="lazy" referrerpolicy="no-referrer" data-fallback="https://picsum.photos/seed/${h.id}-${i}/900/600" /></div>`).join('')}
+      </div>
+      ${h.images.length > 1 ? `
+      <button type="button" class="carousel-btn prev" data-action="slide" data-dir="-1" aria-label="Previous image">${icon('chevron-left')}</button>
+      <button type="button" class="carousel-btn next" data-action="slide" data-dir="1" aria-label="Next image">${icon('chevron-right')}</button>
+      <div class="carousel-dots">${h.images.map((_, i) => `<button type="button" class="dot${i ? '' : ' is-active'}" data-action="go-slide" data-to="${i}" aria-label="Go to image ${i + 1}"></button>`).join('')}</div>` : ''}
+    </div>
+    ${live ? liveStarBadge(h.stars) : `${starBadge(h.stars)}
+    <button type="button" class="fav${fav ? ' is-on' : ''}" data-action="fav" aria-pressed="${fav}" aria-label="Save ${esc(h.name)}">${icon('heart', 18)}</button>`}
+  </div>
+  <div class="card-body">
+    <div class="card-main">
+      <div class="card-title-row">
+        <h3 class="card-title"><a href="#" data-action="open-hotel">${esc(h.name)}</a> <span class="card-loc">in ${esc(h.locality)}</span></h3>
+        <div class="card-rating"><b>${live ? LIVE_RATING_STAR : icon('star', 14)}${h.rating.toFixed(1)}</b><span>(${compact(h.reviews)})</span></div>
+      </div>
+      ${h.tags.length ? `<div class="card-tags">${h.tags.map((t) => `<span class="tag">${TAG_ICONS[t] ? icon(TAG_ICONS[t], 14) : ''}<span>${esc(t)}</span></span>`).join('')}</div>` : ''}
+      ${live ? '' : `      <div class="card-perks">
+        ${h.freeCancellation ? `<span class="perk perk-good">${icon('check', 14)}Free cancellation</span>` : `<span class="perk">${icon('clock', 14)}Non-refundable</span>`}
+        <span class="perk">${icon('building', 14)}${esc(h.type)}</span>
+      </div>`}
+    </div>
+    <div class="card-foot">
+      <div class="card-per">
+        <p>${inr(h.perNight)}/night</p>
+        <p>${plural(nights, 'night')} · ${plural(st.rooms, 'room')}</p>
+      </div>
+      <div class="card-total">
+        <p class="price">${inr(total)}</p>
+        <p>incl. taxes &amp; fees</p>
+      </div>
+      ${live ? '' : '<a href="#" class="btn btn-primary card-cta" data-action="open-hotel">View rooms</a>'}
+    </div>
+  </div>
+</article>`;
+  }
+
+  function renderListing() {
+    const list = results();
+    const listing = $('#listing');
+    listing.innerHTML = list.map(cardHTML).join('');
+    $('#empty').hidden = list.length > 0;
+    listing.hidden = list.length === 0;
+    // Try a placeholder photo if the hotel image fails; if that fails too (e.g. offline), show the plain grey tile.
+    $$('img[data-fallback]', listing).forEach((img) => img.addEventListener('error', () => {
+      if (img.src !== img.dataset.fallback) img.src = img.dataset.fallback;
+      else img.style.visibility = 'hidden';
+    }));
+
+    const label = `${plural(list.length, 'stay')}${list.length !== HOTELS.length ? ` of ${HOTELS.length}` : ''}`;
+    bind('count', label);
+    bind('show-results', list.length ? `Show ${plural(list.length, 'stay')}` : 'No stays');
+  }
+
+  function chipHTML(g, opt) {
+    const f = state.filters;
+    const selected = g.kind === 'single' ? String(f.rating) === opt.value : f[g.id].has(opt.value);
+    const count = g.kind === 'single' && opt.value === '0' ? null : optionCount(g, opt.value);
+    const disabled = !selected && count === 0;
+    const role = g.kind === 'single' ? `role="radio" aria-checked="${selected}"` : `aria-pressed="${selected}"`;
+    return `<button type="button" class="chip${selected ? ' is-selected' : ''}" ${role} data-filter="${g.id}" data-value="${esc(opt.value)}"${disabled ? ' disabled' : ''}>
+      ${opt.icon ? icon(opt.icon, 18) : ''}${g.id === 'stars' ? icon('star', 14) : ''}<span>${esc(opt.label)}</span>${count !== null ? `<span class="chip-count">${count}</span>` : ''}</button>`;
+  }
+
+  function histogramHTML() {
+    const buckets = 16;
+    const width = (priceMax - priceMin) / buckets;
+    const counts = Array(buckets).fill(0);
+    HOTELS.forEach((h) => { counts[Math.min(buckets - 1, Math.floor((h.perNight - priceMin) / width))]++; });
+    const max = Math.max(...counts);
+    return counts.map((c, i) => `<span class="bar" data-from="${priceMin + i * width}" data-to="${priceMin + (i + 1) * width}" style="height:${c ? 18 + (c / max) * 82 : 6}%"></span>`).join('');
+  }
+
+  function groupBodyHTML(g) {
+    const f = state.filters;
+    if (g.kind === 'range') {
+      return `<div class="range" data-range>
+        <div class="histogram" aria-hidden="true">${histogramHTML()}</div>
+        <div class="range-track">
+          <div class="range-fill"></div>
+          <input type="range" class="range-lo" min="${priceMin}" max="${priceMax}" step="${PRICE_STEP}" value="${f.price[0]}" aria-label="Minimum price per night" />
+          <input type="range" class="range-hi" min="${priceMin}" max="${priceMax}" step="${PRICE_STEP}" value="${f.price[1]}" aria-label="Maximum price per night" />
+        </div>
+        <div class="range-inputs">
+          <label class="mini-field"><span>Minimum</span><input type="text" inputmode="numeric" class="range-num-lo" value="${inr(f.price[0])}" /></label>
+          <span class="range-dash">–</span>
+          <label class="mini-field"><span>Maximum</span><input type="text" inputmode="numeric" class="range-num-hi" value="${inr(f.price[1])}${f.price[1] === priceMax ? '+' : ''}" /></label>
+        </div>
+      </div>`;
+    }
+    if (g.kind === 'toggle') {
+      return `<label class="switch-row">
+        <span><b>Only show free cancellation</b><small>${plural(optionCount(g, true), 'stay')} available</small></span>
+        <input type="checkbox" class="switch" data-filter="cancel" ${f.cancel ? 'checked' : ''} />
+      </label>`;
+    }
+    const expanded = state.expanded.has(g.id);
+    const opts = g.limit && !expanded ? g.options.slice(0, g.limit) : g.options;
+    const more = g.limit && g.options.length > g.limit
+      ? `<button type="button" class="link-btn" data-action="toggle-more" data-group="${g.id}">${expanded ? 'Show less' : `Show all ${g.options.length}`}</button>` : '';
+    return `<div class="chips" ${g.kind === 'single' ? 'role="radiogroup"' : ''} aria-label="${esc(g.title)}">${opts.map((o) => chipHTML(g, o)).join('')}</div>${more}`;
+  }
+
+  function syncRange(root) {
+    const [lo, hi] = state.filters.price;
+    const pct = (v) => ((v - priceMin) / (priceMax - priceMin)) * 100;
+    $('.range-lo', root).value = lo;
+    $('.range-hi', root).value = hi;
+    const fill = $('.range-fill', root);
+    fill.style.left = pct(lo) + '%';
+    fill.style.right = 100 - pct(hi) + '%';
+    const nLo = $('.range-num-lo', root), nHi = $('.range-num-hi', root);
+    if (document.activeElement !== nLo) nLo.value = inr(lo);
+    if (document.activeElement !== nHi) nHi.value = inr(hi) + (hi === priceMax ? '+' : '');
+    $$('.bar', root).forEach((b) => b.classList.toggle('in', +b.dataset.to > lo && +b.dataset.from < hi));
+  }
+
+  function renderGroupBodies() {
+    $$('[data-group-body]').forEach((el) => {
+      const g = groupById[el.dataset.groupBody];
+      if (g.kind === 'range') {
+        if (!el.firstElementChild) el.innerHTML = groupBodyHTML(g);
+        syncRange(el);
+      } else {
+        el.innerHTML = groupBodyHTML(g);
+      }
+    });
+  }
+
+  function renderAccordion() {
+    $('#accordion').innerHTML = GROUPS.map((g, i) => {
+      const open = state.open.has(g.id);
+      return `<div class="acc-item${open ? ' is-open' : ''}" data-acc="${g.id}">
+        <button type="button" class="acc-trigger" aria-expanded="${open}" aria-controls="acc-${g.id}" data-action="toggle-acc">
+          <span>${esc(g.title)}</span><span class="acc-meta"><span class="acc-count" hidden></span>${icon('chevron-down')}</span>
+        </button>
+        <div class="acc-panel" id="acc-${g.id}" ${open ? '' : 'inert'}>
+          <div class="acc-inner"><div class="acc-content" data-group-body="${g.id}"></div></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function updateAccordionMeta() {
+    $$('.acc-item').forEach((item) => {
+      const n = groupAppliedCount(item.dataset.acc);
+      const c = $('.acc-count', item);
+      c.hidden = !n;
+      c.textContent = n;
+      // Divider only between two consecutive closed items (mirrors the live page).
+      const prev = item.previousElementSibling;
+      item.classList.toggle('divided', !!prev && !prev.classList.contains('is-open') && !item.classList.contains('is-open'));
+    });
+  }
+
+  function quickLabel(g) {
+    const f = state.filters;
+    if (!isGroupActive(g.id)) return g.quick;
+    if (g.kind === 'range') return `${inrShort(f.price[0])} – ${inrShort(f.price[1])}${f.price[1] === priceMax ? '+' : ''}`;
+    if (g.kind === 'single') return `${f.rating}+ rating`;
+    if (g.kind === 'toggle') return g.quick;
+    const sel = [...f[g.id]];
+    if (g.id === 'stars') return sel.sort().reverse().join(', ') + ' star';
+    return sel.length === 1 ? sel[0] : `${g.quick} · ${sel.length}`;
+  }
+
+  function renderQuickbar() {
+    const n = appliedCount();
+    $('#quickbar').innerHTML = `
+      <button type="button" class="qpill qpill-all" data-action="open-drawer" data-focus="filters">${icon('sliders')}All filters${n ? `<span class="badge">${n}</span>` : ''}</button>
+      <span class="qdivider" aria-hidden="true"></span>
+      ${GROUPS.filter((g) => g.quick).map((g) => {
+        const active = isGroupActive(g.id);
+        if (g.kind === 'toggle') {
+          return `<button type="button" class="qpill${active ? ' is-active' : ''}" data-action="quick-toggle" data-group="${g.id}" aria-pressed="${active}">${active ? icon('check') : ''}${esc(g.quick)}</button>`;
+        }
+        const open = quickOpen === g.id;
+        return `<button type="button" class="qpill${active ? ' is-active' : ''}" data-action="quick-open" data-group="${g.id}" aria-expanded="${open}" aria-haspopup="dialog">${esc(quickLabel(g))}${icon('chevron-down')}</button>`;
+      }).join('')}`;
+  }
+
+  function renderActiveFilters() {
+    const f = state.filters;
+    const chips = [];
+    if (state.query) chips.push({ key: 'query', label: `“${state.query}”` });
+    if (isGroupActive('price')) chips.push({ key: 'price', label: `${inr(f.price[0])} – ${inr(f.price[1])}${f.price[1] === priceMax ? '+' : ''}` });
+    f.stars.forEach((v) => chips.push({ key: 'stars', value: v, label: `${v} star` }));
+    if (f.rating) chips.push({ key: 'rating', label: `Rating ${f.rating}+` });
+    if (f.cancel) chips.push({ key: 'cancel', label: 'Free cancellation' });
+    ['types', 'facilities', 'chains', 'houseRules'].forEach((id) => f[id].forEach((v) => chips.push({ key: id, value: v, label: v })));
+    const el = $('#active-filters');
+    el.hidden = !chips.length;
+    el.innerHTML = chips.map((c) => `<button type="button" class="active-chip" data-action="remove-filter" data-key="${c.key}" data-value="${esc(c.value ?? '')}" aria-label="Remove ${esc(c.label)}">${esc(c.label)}${icon('x', 14)}</button>`).join('')
+      + (chips.length > 1 ? `<button type="button" class="link-btn" data-action="clear-all">Clear all</button>` : '');
+  }
+
+  function bind(key, value, attr) {
+    $$(`[data-bind="${key}"]`).forEach((el) => { if (attr) el.setAttribute(attr, value); else el.textContent = value; });
+  }
+
+  const guestsSummary = (d) => [plural(d.adults + d.children, 'guest'), d.rooms > 1 ? plural(d.rooms, 'room') : ''].filter(Boolean).join(' · ');
+
+  function renderStay() {
+    const d = state.draft;
+    const a = state.stay;
+    bind('dates', `${fmtDay(d.checkIn)} - ${fmtDay(d.checkOut)}`);
+    bind('nights', `${nightsOf(d)}N`);
+    renderGuestsChips();
+    $$('.stay-dest').forEach((i) => { if (i !== document.activeElement) i.value = d.destination; });
+    bind('bar-dates', `${fmtDay(d.checkIn)} – ${fmtDay(d.checkOut)}`);
+    bind('bar-guests', guestsSummary(d));
+
+    bind('destination', a.destination);
+    if (document.body.dataset.view === 'pdp') {
+      // The PDP has no Search button: date / guest edits apply straight away.
+      state.stay = structuredClone(state.draft);
+      window.PDP?.refresh();
+    } else {
+      document.title = `Hotels in ${a.destination} | onto.travel (UI prototype)`;
+    }
+  }
+
+  function renderGuestsChips() {
+    const d = state.draft;
+    const g = [`<span class="pill-soft">${plural(d.adults, 'Adult')}</span>`];
+    if (d.children) g.push(`<span class="pill-soft">${d.children === 1 ? '1 Child' : `${d.children} Children`}</span>`);
+    if (d.rooms > 1) g.push(`<span class="pill-soft">${plural(d.rooms, 'Room')}</span>`);
+    $$('[data-bind="guests-chips"]').forEach((el) => (el.innerHTML = g.join('')));
+  }
+  const STEP_LIMITS = { adults: [1, 16], children: [0, 8], rooms: [1, 8] };
+
+  function renderSortMenu() {
+    const cur = SORTS.find((s) => s.value === state.sort);
+    bind('sort-label', cur.label);
+    $('#sort .menu').innerHTML = SORTS.map((s) => `<li role="option" tabindex="-1" aria-selected="${s.value === state.sort}" data-value="${s.value}">${esc(s.label)}${s.value === state.sort ? icon('check') : ''}</li>`).join('');
+  }
+
+  let fadeTimer;
+  function render({ fade = false } = {}) {
+    if (fade) {
+      const l = $('#listing');
+      l.classList.add('is-busy');
+      l.setAttribute('aria-busy', 'true');
+      clearTimeout(fadeTimer);
+      fadeTimer = setTimeout(() => { l.classList.remove('is-busy'); l.setAttribute('aria-busy', 'false'); }, 180);
+    }
+    renderListing();
+    renderGroupBodies();
+    updateAccordionMeta();
+    renderQuickbar();
+    renderActiveFilters();
+    const n = appliedCount();
+    bind('applied', `${n} applied`);
+    $$('[data-bind="applied"]').forEach((el) => (el.hidden = !n));
+    $$('[data-bind="clear-all"]').forEach((el) => (el.hidden = !n));
+    const badge = $('[data-bind="applied-badge"]');
+    badge.hidden = !n; badge.textContent = n;
+    if (quickOpen) positionQuickPop();
+  }
+
+  /* --------------------------------------------------------------- actions */
+  function toggleFilter(id, value) {
+    const g = groupById[id];
+    const f = state.filters;
+    if (g.kind === 'single') f.rating = +value === f.rating ? 0 : +value;
+    else if (g.kind === 'toggle') f.cancel = !f.cancel;
+    else f[id].has(value) ? f[id].delete(value) : f[id].add(value);
+    render({ fade: true });
+  }
+
+  function clearGroup(id) {
+    const fresh = emptyFilters();
+    state.filters[id] = fresh[id];
+  }
+
+  function clearAll() {
+    state.filters = emptyFilters();
+    state.query = '';
+    render({ fade: true });
+  }
+
+  function setPrice(lo, hi, which) {
+    lo = Math.max(priceMin, Math.min(lo, priceMax));
+    hi = Math.max(priceMin, Math.min(hi, priceMax));
+    if (lo > hi - PRICE_STEP) {
+      if (which === 'lo') lo = hi - PRICE_STEP; else hi = lo + PRICE_STEP;
+    }
+    state.filters.price = [Math.max(priceMin, lo), Math.min(priceMax, hi)];
+    render();
+  }
+
+  function setLayout(layout, { silent } = {}) {
+    state.layout = layout;
+    document.body.dataset.layout = layout;
+    $$('[data-layout-option]').forEach((b) => b.setAttribute('aria-checked', b.dataset.layoutOption === layout));
+    try { localStorage.setItem('onto-layout', layout); } catch {}
+    history.replaceState(null, '', hashFor({ hotel: parseHash().hotel }));
+    closeQuickPop();
+    closeDrawer();
+    closeSheet({ revert: true });
+    if (!silent) render();
+    requestAnimationFrame(observeTitle);
+  }
+
+  function toast(msg) {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.hidden = false;
+    t.classList.add('show');
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => { t.classList.remove('show'); setTimeout(() => (t.hidden = true), 200); }, 2400);
+  }
+
+  function flashCard(id) {
+    const card = $(`.card[data-id="${id}"]`);
+    if (!card) return false;
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    card.classList.remove('flash');
+    void card.offsetWidth;
+    card.classList.add('flash');
+    return true;
+  }
+
+  /* ----------------------------------------------------- popovers & drawer */
+  function closePops(except) {
+    if (except !== 'sort') { $('#sort .menu').hidden = true; $('#sort button').setAttribute('aria-expanded', 'false'); }
+  }
+
+  let quickOpen = null;
+  function openQuickPop(id) {
+    if (quickOpen === id) return closeQuickPop();
+    closePops();
+    quickOpen = id;
+    const g = groupById[id];
+    $('#quick-pop-body').innerHTML = `<h5 class="quick-pop-title">${esc(g.title)}</h5><div data-group-body="${g.id}"></div>`;
+    $('#quick-pop').hidden = false;
+    render();
+  }
+  function closeQuickPop() {
+    if (!quickOpen) return;
+    quickOpen = null;
+    $('#quick-pop').hidden = true;
+    $('#quick-pop-body').innerHTML = '';
+    renderQuickbar();
+  }
+  function positionQuickPop() {
+    const btn = $(`.qpill[data-group="${quickOpen}"]`);
+    const pop = $('#quick-pop');
+    if (!btn) return;
+    const r = btn.getBoundingClientRect();
+    const w = Math.min(380, window.innerWidth - 24);
+    pop.style.width = w + 'px';
+    pop.style.left = Math.max(12, Math.min(r.left, window.innerWidth - w - 12)) + 'px';
+    pop.style.top = r.bottom + 8 + 'px';
+  }
+
+  const drawerMode = () => state.layout === 'gallery' || window.matchMedia('(max-width: 1023px)').matches;
+  function openDrawer(focus) {
+    if (!drawerMode()) {
+      // Sidebar is already on screen: just bring the section into view.
+      $(`#${focus === 'stay' ? 'stay' : 'filters'}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    closeQuickPop();
+    document.body.classList.add('drawer-open');
+    $('#scrim').hidden = false;
+    const target = $(`#${focus === 'stay' ? 'stay' : 'filters'}`);
+    requestAnimationFrame(() => {
+      $('.sidebar-scroll').scrollTop = focus === 'stay' ? 0 : target.offsetTop - 8;
+      $('#sidebar .drawer-head button').focus({ preventScroll: true });
+    });
+  }
+  function closeDrawer() {
+    document.body.classList.remove('drawer-open');
+    $('#scrim').hidden = true;
+  }
+
+  /* ------------------------------------------ Where / When / Who sheet */
+  // One floating sheet, anchored under whichever field opened it (header stay bar or sidebar).
+  const TODAY = '2026-10-19';
+  const SHEET_W = { where: 440, when: 720, who: 400 };
+  const sheet = { type: null, anchor: null, fromBar: false, snapshot: null, query: '', active: -1, items: [], month: null, pickingEnd: false };
+
+  function sheetAnchor(type, fromBar) {
+    if (fromBar) return $(`#stay-bar [data-seg="${type}"]`);
+    return type === 'where' ? $('#sidebar [data-sheet-wrap="where"]') : $(`#sidebar [data-action="open-sheet"][data-sheet="${type}"]`);
+  }
+
+  function openSheet(type, fromBar, anchor) {
+    closePops(); closeQuickPop();
+    if (fromBar && !document.body.classList.contains('bar-open')) {
+      sheet.snapshot = structuredClone(state.draft); // restored if the bar is dismissed without searching
+      document.body.classList.add('bar-open');
+      $('#bar-scrim').hidden = false;
+    }
+    sheet.type = type;
+    sheet.fromBar = fromBar;
+    sheet.active = -1;
+    if (type === 'when') {
+      const ci = parseDate(state.draft.checkIn);
+      sheet.month = new Date(ci.getFullYear(), ci.getMonth(), 1);
+      sheet.pickingEnd = false;
+    }
+    sheet.anchor = anchor || sheetAnchor(type, fromBar);
+    $$('#stay-bar [data-seg]').forEach((el) => el.classList.toggle('is-active', fromBar && el.dataset.seg === type));
+    $$('[data-action="open-sheet"]').forEach((b) => b.setAttribute('aria-expanded', String(b === sheet.anchor)));
+    $$('[data-sheet-wrap]').forEach((w) => w.classList.toggle('is-active', w === sheet.anchor));
+    renderStay();
+    renderSheet();
+    $('#stay-sheet').hidden = false;
+    positionSheet();
+    revealSheet();
+    setTimeout(positionSheet, 300); // again once the bar has finished widening
+  }
+
+  function closeSheet({ revert = false } = {}) {
+    if (!sheet.type) return;
+    if (revert && sheet.snapshot) state.draft = sheet.snapshot;
+    sheet.type = null;
+    sheet.snapshot = null;
+    $('#stay-sheet').hidden = true;
+    document.body.classList.remove('bar-open');
+    $('#bar-scrim').hidden = true;
+    $$('#stay-bar [data-seg], [data-sheet-wrap]').forEach((el) => el.classList.remove('is-active'));
+    $$('[data-action="open-sheet"]').forEach((b) => b.setAttribute('aria-expanded', 'false'));
+    if (document.activeElement?.classList.contains('stay-dest')) document.activeElement.blur();
+    renderStay();
+  }
+
+  // If the sheet would run off the bottom of the screen, scroll the page up (keeping the field below the header).
+  function revealSheet() {
+    if (sheet.fromBar) return;
+    const r = sheet.anchor.getBoundingClientRect();
+    const overflow = r.bottom + 10 + $('#stay-sheet').scrollHeight + 16 - window.innerHeight;
+    const room = r.top - $('.topbar').offsetHeight - 72;
+    if (overflow > 0 && room > 0) window.scrollBy({ top: Math.min(overflow, room) });
+  }
+
+  function positionSheet() {
+    if (!sheet.type) return;
+    const el = $('#stay-sheet');
+    const r = sheet.anchor.getBoundingClientRect();
+    const w = Math.min(SHEET_W[sheet.type], window.innerWidth - 24);
+    let left = r.left;
+    if (sheet.fromBar) {
+      const bar = $('#stay-bar').getBoundingClientRect();
+      if (sheet.type === 'when') left = bar.left + (bar.width - w) / 2;
+      if (sheet.type === 'who') left = bar.right - w;
+    }
+    el.style.width = w + 'px';
+    el.style.left = Math.max(12, Math.min(left, window.innerWidth - w - 12)) + 'px';
+    el.style.top = r.bottom + 10 + 'px';
+    el.style.maxHeight = Math.max(240, window.innerHeight - r.bottom - 24) + 'px';
+    el.classList.toggle('one-month', w < 600);
+  }
+
+  function renderSheet() {
+    const el = $('#stay-sheet');
+    el.dataset.type = sheet.type;
+    el.innerHTML = sheet.type === 'where' ? whereHTML() : sheet.type === 'when' ? whenHTML() : whoHTML();
+  }
+
+  function whereHTML() {
+    const q = sheet.query.trim().toLowerCase();
+    const items = DESTINATIONS.filter((d) => !q || `${d.name} ${d.region}`.toLowerCase().includes(q));
+    if (!q) items.unshift({ name: 'Nearby', nearby: true, blurb: 'Find what’s around you', icon: 'nav', tone: '#2563eb' });
+    sheet.items = items;
+    const rows = items.map((d, i) => `
+      <button type="button" class="dest-item${i === sheet.active ? ' is-active' : ''}" role="option" aria-selected="${i === sheet.active}" data-dest-index="${i}">
+        <span class="dest-tile" style="--tone:${d.tone}">${icon(d.icon, 24)}</span>
+        <span class="dest-text"><b>${esc(d.nearby ? d.name : `${d.name}, ${d.region.split(',')[0]}`)}${!d.nearby && d.name === state.stay.destination ? '<em>Current</em>' : ''}</b><small>${esc(d.blurb)}</small></span>
+      </button>`).join('');
+    return `<p class="sheet-title">${q ? 'Destinations' : 'Suggested destinations'}</p>
+      <div class="dest-list" role="listbox">${rows || `<p class="sheet-empty">No destinations match “${esc(sheet.query)}”</p>`}</div>`;
+  }
+
+  function monthHTML(m) {
+    const y = m.getFullYear(), mo = m.getMonth();
+    const offset = (new Date(y, mo, 1).getDay() + 6) % 7; // weeks start on Monday
+    const count = new Date(y, mo + 1, 0).getDate();
+    const d = state.draft;
+    let cells = '<span></span>'.repeat(offset);
+    for (let i = 1; i <= count; i++) {
+      const iso = isoDate(new Date(y, mo, i));
+      const start = iso === d.checkIn;
+      const end = !sheet.pickingEnd && iso === d.checkOut;
+      const cls = ['day', start && 'is-start', end && 'is-end', !sheet.pickingEnd && iso > d.checkIn && iso < d.checkOut && 'in-range', start && !sheet.pickingEnd && 'has-range'].filter(Boolean).join(' ');
+      cells += `<button type="button" class="${cls}" data-day="${iso}"${iso < TODAY ? ' disabled' : ''} aria-pressed="${start || end}" aria-label="${fmtDay(iso)}">${i}</button>`;
+    }
+    return `<div class="month">
+      <p class="month-name">${m.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}</p>
+      <div class="dow">${['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((x) => `<span>${x}</span>`).join('')}</div>
+      <div class="days">${cells}</div>
+    </div>`;
+  }
+
+  function whenHTML() {
+    const d = state.draft;
+    const m1 = sheet.month;
+    const m2 = new Date(m1.getFullYear(), m1.getMonth() + 1, 1);
+    const canPrev = isoDate(m1) > TODAY.slice(0, 8) + '01';
+    const status = sheet.pickingEnd
+      ? `Check-in ${fmtDay(d.checkIn)} · now pick check-out`
+      : `${fmtDay(d.checkIn)} – ${fmtDay(d.checkOut)} · ${plural(nightsOf(d), 'night')}`;
+    return `<div class="cal-head">
+        <button type="button" class="icon-btn" data-action="cal-nav" data-dir="-1"${canPrev ? '' : ' disabled'} aria-label="Previous month">${icon('chevron-left')}</button>
+        <p class="cal-status" aria-live="polite">${status}</p>
+        <button type="button" class="icon-btn" data-action="cal-nav" data-dir="1" aria-label="Next month">${icon('chevron-right')}</button>
+      </div>
+      <div class="cal-months">${monthHTML(m1)}${monthHTML(m2)}</div>
+      <div class="cal-foot">${[1, 2, 3, 5, 7].map((n) => `<button type="button" class="chip chip-sm${!sheet.pickingEnd && nightsOf(d) === n ? ' is-selected' : ''}" data-action="set-nights" data-n="${n}">${plural(n, 'night')}</button>`).join('')}</div>`;
+  }
+
+  const STEP_ROWS = [
+    { key: 'adults', label: 'Adults', sub: 'Ages 13 or above' },
+    { key: 'children', label: 'Children', sub: 'Ages 0–12' },
+    { key: 'rooms', label: 'Rooms', sub: 'Up to one per adult' },
+  ];
+  function whoHTML() {
+    const d = state.draft;
+    // On the hotel page rooms are picked per room type, so the Who sheet only asks about guests.
+    const rows = STEP_ROWS.filter(({ key }) => key !== 'rooms' || document.body.dataset.view !== 'pdp').map(({ key, label, sub }) => {
+      const [mn, mx] = STEP_LIMITS[key];
+      return `<div class="who-row">
+        <div><b>${label}</b><small>${sub}</small></div>
+        <div class="stepper">
+          <button type="button" data-action="step" data-key="${key}" data-dir="-1"${d[key] <= mn ? ' disabled' : ''} aria-label="Fewer ${label.toLowerCase()}">−</button>
+          <output>${d[key]}</output>
+          <button type="button" data-action="step" data-key="${key}" data-dir="1"${d[key] >= mx || (key === 'rooms' && d.rooms >= d.adults) ? ' disabled' : ''} aria-label="More ${label.toLowerCase()}">+</button>
+        </div>
+      </div>`;
+    }).join('');
+    const ages = d.childAges.map((age, i) => `<label class="mini-field"><span>Child ${i + 1} age</span><select data-child="${i}">${Array.from({ length: 13 }, (_, n) => `<option value="${n}"${n === age ? ' selected' : ''}>${n === 0 ? 'Under 1' : n}</option>`).join('')}</select></label>`).join('');
+    return `${rows}${ages ? `<div class="child-ages">${ages}</div>` : ''}`;
+  }
+
+  function pickDestination(item) {
+    if (item.nearby) toast('Using your location — showing Udaipur (prototype)');
+    state.draft.destination = item.nearby ? 'Udaipur' : item.name;
+    sheet.query = '';
+    $$('.stay-dest').forEach((i) => (i.value = state.draft.destination));
+    if (sheet.fromBar) openSheet('when', true); // Airbnb-style: move on to the next segment
+    else closeSheet();
+  }
+
+  function pickDay(iso) {
+    const d = state.draft;
+    if (!sheet.pickingEnd || iso <= d.checkIn) {
+      d.checkIn = iso;
+      d.checkOut = isoDate(new Date(parseDate(iso).getTime() + DAY));
+      sheet.pickingEnd = true;
+    } else {
+      d.checkOut = iso;
+      sheet.pickingEnd = false;
+    }
+    renderStay();
+    renderSheet();
+  }
+
+  /* ----------------------------------------------------------------- login */
+  function openLogin() {
+    closePops(); closeQuickPop(); closeDrawer();
+    showLoginStep('email');
+    $('#login-dialog').hidden = false;
+    $('#scrim').hidden = false;
+    document.body.classList.add('login-open');
+    requestAnimationFrame(() => $('#login-email').focus());
+  }
+  function closeLogin() {
+    $('#login-dialog').hidden = true;
+    document.body.classList.remove('login-open');
+    $('#scrim').hidden = true;
+  }
+  function showLoginStep(step) {
+    $('#login-email-step').hidden = step !== 'email';
+    $('#login-code-step').hidden = step !== 'code';
+    $('#login-email-error').hidden = true;
+    $('#login-code-error').hidden = true;
+    if (step === 'code') {
+      $$('#otp input').forEach((i) => (i.value = ''));
+      requestAnimationFrame(() => $('#otp input').focus());
+    }
+  }
+  function logIn(email) {
+    const name = email.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+    state.user = { email, name };
+    try { localStorage.setItem('onto-user', JSON.stringify(state.user)); } catch {}
+    closeLogin();
+    renderAccount();
+    toast(`Welcome, ${name.split(' ')[0]}! You’re logged in`);
+  }
+  function logOut() {
+    state.user = null;
+    try { localStorage.removeItem('onto-user'); } catch {}
+    renderAccount();
+    toast('You’ve been logged out');
+  }
+  function renderAccount() {
+    const u = state.user;
+    $('.login-cta').hidden = !!u;
+    $('#account').hidden = !u;
+    $('#account .menu').hidden = true;
+    $('[data-action="toggle-account"]').setAttribute('aria-expanded', 'false');
+    if (!u) return;
+    bind('avatar', u.name.charAt(0).toUpperCase());
+    bind('account-name', u.name);
+    bind('account-email', u.email);
+    bind('saved-count', state.favourites.size);
+  }
+
+  $('#login-email-step').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = $('#login-email').value.trim();
+    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    $('#login-email-error').hidden = ok;
+    if (!ok) return $('#login-email').focus();
+    bind('login-sent-to', email);
+    showLoginStep('code');
+  });
+  $('#login-email').addEventListener('input', () => ($('#login-email-error').hidden = true));
+  $('#login-code-step').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const code = $$('#otp input').map((i) => i.value).join('');
+    const ok = /^\d{6}$/.test(code);
+    $('#login-code-error').hidden = ok;
+    if (ok) logIn($('#login-email').value.trim());
+  });
+  // OTP boxes: auto-advance, backspace to previous, paste a whole code.
+  $('#otp').addEventListener('input', (e) => {
+    const inputs = $$('#otp input');
+    const i = inputs.indexOf(e.target);
+    e.target.value = e.target.value.replace(/\D/g, '').slice(-1);
+    if (e.target.value && inputs[i + 1]) inputs[i + 1].focus();
+    if (inputs.every((x) => x.value)) $('#login-code-step').requestSubmit();
+  });
+  $('#otp').addEventListener('keydown', (e) => {
+    const inputs = $$('#otp input');
+    const i = inputs.indexOf(e.target);
+    if (e.key === 'Backspace' && !e.target.value && inputs[i - 1]) inputs[i - 1].focus();
+  });
+  $('#otp').addEventListener('paste', (e) => {
+    const digits = (e.clipboardData.getData('text') || '').replace(/\D/g, '').slice(0, 6);
+    if (!digits) return;
+    e.preventDefault();
+    $$('#otp input').forEach((x, j) => (x.value = digits[j] || ''));
+    if (digits.length === 6) $('#login-code-step').requestSubmit();
+  });
+
+  /* ------------------------------------------------------- Cmd+K search */
+  let searchActive = 0;
+  function openSearch() {
+    closePops(); closeQuickPop();
+    $('#search-dialog').hidden = false;
+    $('#scrim').hidden = false;
+    document.body.classList.add('search-open');
+    const input = $('#search-input');
+    input.value = state.query;
+    searchActive = 0;
+    renderSearch();
+    requestAnimationFrame(() => { input.focus(); input.select(); });
+  }
+  function closeSearch() {
+    $('#search-dialog').hidden = true;
+    document.body.classList.remove('search-open');
+    if (!document.body.classList.contains('drawer-open')) $('#scrim').hidden = true;
+  }
+  function searchItems() {
+    const q = $('#search-input').value.trim().toLowerCase();
+    const items = [];
+    if (q) items.push({ kind: 'query', label: `Search “${$('#search-input').value.trim()}” in ${state.stay.destination} stays`, icon: 'search' });
+    HOTELS.filter((h) => !q || `${h.name} ${h.locality}`.toLowerCase().includes(q)).slice(0, q ? 8 : 5)
+      .forEach((h) => items.push({ kind: 'hotel', id: h.id, label: h.name, sub: `${h.locality} · ${h.stars}★ · ${inr(h.perNight)}/night`, icon: 'building' }));
+    DESTINATIONS.filter((d) => q && d.name.toLowerCase().includes(q) && d.name !== state.stay.destination)
+      .forEach((d) => items.push({ kind: 'dest', value: d.name, label: d.name, sub: d.region, icon: 'pin' }));
+    return items;
+  }
+  function renderSearch() {
+    const items = searchItems();
+    searchActive = Math.min(searchActive, Math.max(0, items.length - 1));
+    let lastKind = null;
+    const head = { hotel: 'Hotels', dest: 'Destinations' };
+    $('#search-results').innerHTML = items.length ? items.map((it, i) => {
+      const h = it.kind !== lastKind && head[it.kind] ? `<div class="search-group">${head[it.kind]}</div>` : '';
+      lastKind = it.kind;
+      return `${h}<button type="button" class="search-item${i === searchActive ? ' is-active' : ''}" role="option" aria-selected="${i === searchActive}" data-index="${i}">${icon(it.icon, 18)}<span><b>${esc(it.label)}</b>${it.sub ? `<small>${esc(it.sub)}</small>` : ''}</span></button>`;
+    }).join('') : '<p class="search-empty">Nothing found. Try another hotel or area.</p>';
+    $('#search-results').__items = items;
+  }
+  function pickSearch(i) {
+    const it = $('#search-results').__items[i];
+    if (!it) return;
+    closeSearch();
+    if (it.kind === 'query') {
+      state.query = $('#search-input').value.trim();
+      render({ fade: true });
+    } else if (it.kind === 'hotel') {
+      if (!results().some((h) => h.id === it.id)) {
+        state.filters = emptyFilters(); state.query = '';
+        render();
+        toast('Filters cleared to show this stay');
+      }
+      setTimeout(() => flashCard(it.id), 50);
+    } else if (it.kind === 'dest') {
+      pickDestination(it.value);
+      runSearch();
+    }
+  }
+
+  function runSearch() {
+    const name = state.draft.destination.trim();
+    if (!name) {
+      const input = $$('.stay-dest').find((i) => i.offsetParent);
+      input ? input.focus() : openDrawer('stay');
+      toast('Pick a destination first');
+      return;
+    }
+    state.draft.destination = name;
+    state.stay = structuredClone(state.draft);
+    sheet.snapshot = null;
+    closeSheet();
+    closePops();
+    closeDrawer();
+    const l = $('#listing');
+    l.classList.add('is-loading');
+    l.setAttribute('aria-busy', 'true');
+    l.innerHTML = Array.from({ length: 4 }, () => '<div class="card skeleton"><div class="sk-media"></div><div class="sk-line"></div><div class="sk-line short"></div></div>').join('');
+    setTimeout(() => {
+      l.classList.remove('is-loading');
+      l.setAttribute('aria-busy', 'false');
+      renderStay();
+      render();
+      if (name !== 'Udaipur') toast(`Dummy data: showing Udaipur stays for “${name}”`);
+    }, 600);
+  }
+
+  /* -------------------------------------------------------------- events */
+  document.addEventListener('click', (e) => {
+    const t = e.target;
+
+    // Click-outside handling for popovers.
+    if (!t.closest('#sort')) closePops();
+    if (sheet.type && !t.closest('#stay-sheet, #stay-bar, [data-sheet-wrap], [data-action="open-sheet"]')) closeSheet({ revert: sheet.fromBar });
+    if (!t.closest('#account')) { $('#account .menu').hidden = true; $('[data-action="toggle-account"]').setAttribute('aria-expanded', 'false'); }
+    if (quickOpen && !t.closest('#quick-pop') && !t.closest('.qpill')) closeQuickPop();
+
+    const chip = t.closest('[data-filter]');
+    if (chip && chip.tagName === 'BUTTON') { toggleFilter(chip.dataset.filter, chip.dataset.value); return; }
+
+    const opt = t.closest('#sort [role="option"]');
+    if (opt) { state.sort = opt.dataset.value; renderSortMenu(); closePops(); render({ fade: true }); $('#sort button').focus(); return; }
+
+    const dest = t.closest('[data-dest-index]');
+    if (dest) { pickDestination(sheet.items[+dest.dataset.destIndex]); return; }
+
+    const day = t.closest('[data-day]');
+    if (day) { pickDay(day.dataset.day); return; }
+
+    const si = t.closest('.search-item');
+    if (si) { pickSearch(+si.dataset.index); return; }
+
+    const lo = t.closest('[data-layout-option]');
+    if (lo) { setLayout(lo.dataset.layoutOption); return; }
+
+    const a = t.closest('[data-action]');
+    if (!a) return;
+    const card = a.closest('.card');
+    switch (a.dataset.action) {
+      case 'toggle-acc': {
+        const item = a.closest('.acc-item');
+        const id = item.dataset.acc;
+        const open = !state.open.has(id);
+        open ? state.open.add(id) : state.open.delete(id);
+        item.classList.toggle('is-open', open);
+        a.setAttribute('aria-expanded', open);
+        $('.acc-panel', item).inert = !open;
+        updateAccordionMeta();
+        break;
+      }
+      case 'toggle-more':
+        state.expanded.has(a.dataset.group) ? state.expanded.delete(a.dataset.group) : state.expanded.add(a.dataset.group);
+        renderGroupBodies();
+        break;
+      case 'clear-all': clearAll(); break;
+      case 'remove-filter': {
+        const { key, value } = a.dataset;
+        if (key === 'query') state.query = '';
+        else if (groupById[key].kind === 'multi') state.filters[key].delete(value);
+        else clearGroup(key);
+        render({ fade: true });
+        break;
+      }
+      case 'toggle-sort': {
+        const menu = $('#sort .menu');
+        const willOpen = menu.hidden;
+        closePops(willOpen ? 'sort' : undefined);
+        menu.hidden = !willOpen;
+        a.setAttribute('aria-expanded', willOpen);
+        if (willOpen) $('#sort [aria-selected="true"]').focus();
+        break;
+      }
+      case 'open-sheet': {
+        const fromBar = !!a.closest('#stay-bar');
+        if (!fromBar && sheet.type === a.dataset.sheet && sheet.anchor === a) closeSheet();
+        else openSheet(a.dataset.sheet, fromBar, fromBar ? null : a);
+        break;
+      }
+      case 'set-nights': {
+        const d = state.draft;
+        d.checkOut = isoDate(new Date(parseDate(d.checkIn).getTime() + +a.dataset.n * DAY));
+        sheet.pickingEnd = false;
+        renderStay();
+        renderSheet();
+        break;
+      }
+      case 'cal-nav':
+        sheet.month = new Date(sheet.month.getFullYear(), sheet.month.getMonth() + +a.dataset.dir, 1);
+        renderSheet();
+        break;
+      case 'step': {
+        const d = state.draft;
+        const k = a.dataset.key;
+        const [mn, mx] = STEP_LIMITS[k];
+        d[k] = Math.max(mn, Math.min(mx, d[k] + +a.dataset.dir));
+        if (k === 'children') d.childAges = d.childAges.slice(0, d.children).concat(Array(Math.max(0, d.children - d.childAges.length)).fill(5));
+        if (k === 'adults' && d.rooms > d.adults) d.rooms = d.adults;
+        renderStay();
+        renderSheet();
+        break;
+      }
+      case 'clear-destination': {
+        const input = a.closest('[data-sheet-wrap]').querySelector('.stay-dest');
+        input.value = '';
+        state.draft.destination = '';
+        input.focus();
+        break;
+      }
+      case 'run-search': runSearch(); break;
+      case 'open-drawer': openDrawer(a.dataset.focus); break;
+      case 'close-drawer': closeDrawer(); break;
+      case 'open-search': openSearch(); break;
+      case 'open-login': openLogin(); break;
+      case 'close-login': closeLogin(); break;
+      case 'login-back': showLoginStep('email'); $('#login-email').focus(); break;
+      case 'login-resend': toast('New code sent (prototype: any 6 digits work)'); break;
+      case 'login-google': logIn('traveller@gmail.com'); break;
+      case 'toggle-account': {
+        const menu = $('#account .menu');
+        menu.hidden = !menu.hidden;
+        a.setAttribute('aria-expanded', String(!menu.hidden));
+        bind('saved-count', state.favourites.size);
+        break;
+      }
+      case 'account-item': $('#account .menu').hidden = true; toast(a.dataset.msg); break;
+      case 'logout': logOut(); break;
+      case 'quick-open': openQuickPop(a.dataset.group); break;
+      case 'quick-toggle': toggleFilter(a.dataset.group); break;
+      case 'quick-clear': if (quickOpen) { clearGroup(quickOpen); render({ fade: true }); } break;
+      case 'quick-close': closeQuickPop(); break;
+      case 'slide': case 'go-slide': {
+        e.preventDefault();
+        const car = a.closest('.carousel');
+        const track = $('.carousel-track', car);
+        const n = track.children.length;
+        const cur = Math.round(track.scrollLeft / track.clientWidth);
+        const to = a.dataset.action === 'slide' ? (cur + +a.dataset.dir + n) % n : +a.dataset.to;
+        track.scrollTo({ left: to * track.clientWidth, behavior: Math.abs(to - cur) > 1 ? 'instant' : 'smooth' });
+        break;
+      }
+      case 'fav': {
+        const id = card.dataset.id;
+        const on = !state.favourites.has(id);
+        on ? state.favourites.add(id) : state.favourites.delete(id);
+        a.classList.toggle('is-on', on);
+        a.setAttribute('aria-pressed', on);
+        toast(on ? 'Saved to your shortlist' : 'Removed from your shortlist');
+        break;
+      }
+      case 'open-hotel':
+        e.preventDefault();
+        goToHotel(card.dataset.id, a.classList.contains('card-cta') ? 'rooms' : null);
+        break;
+      case 'go-results':
+        e.preventDefault();
+        if (document.body.dataset.view === 'pdp') goToResults();
+        else window.scrollTo({ top: 0, behavior: 'smooth' });
+        break;
+    }
+  });
+
+  $('#scrim').addEventListener('click', () => { closeDrawer(); closeSearch(); if (!$('#login-dialog').hidden) closeLogin(); });
+
+  // Range slider + numeric inputs (delegated so they work in the accordion and in quick popovers).
+  document.addEventListener('input', (e) => {
+    const t = e.target;
+    if (t.matches('.range-lo')) setPrice(+t.value, state.filters.price[1], 'lo');
+    else if (t.matches('.range-hi')) setPrice(state.filters.price[0], +t.value, 'hi');
+    else if (t.classList.contains('stay-dest')) { sheet.query = t.value; state.draft.destination = t.value; sheet.active = -1; if (sheet.type === 'where') renderSheet(); }
+    else if (t.id === 'search-input') { searchActive = 0; renderSearch(); }
+  });
+  document.addEventListener('change', (e) => {
+    const t = e.target;
+    const num = (v) => +String(v).replace(/\D/g, '') || 0;
+    if (t.matches('.range-num-lo')) setPrice(Math.round(num(t.value) / PRICE_STEP) * PRICE_STEP, state.filters.price[1], 'lo');
+    else if (t.matches('.range-num-hi')) setPrice(state.filters.price[0], Math.round((num(t.value) || priceMax) / PRICE_STEP) * PRICE_STEP, 'hi');
+    else if (t.matches('.switch[data-filter]')) toggleFilter('cancel');
+    else if (t.matches('[data-child]')) {
+      state.draft.childAges[+t.dataset.child] = +t.value;
+    }
+  });
+  document.addEventListener('keydown', (e) => {
+    const t = e.target;
+    if (t.matches('.range-num-lo, .range-num-hi') && e.key === 'Enter') t.blur();
+  });
+
+  // Destination inputs (sidebar + header bar) open the Where sheet; arrows/Enter pick a suggestion.
+  document.addEventListener('focusin', (e) => {
+    const t = e.target;
+    if (!t.classList?.contains('stay-dest')) return;
+    const fromBar = !!t.closest('#stay-bar');
+    if (sheet.type === 'where' && sheet.fromBar === fromBar) return;
+    sheet.query = '';
+    openSheet('where', fromBar);
+    t.select();
+  });
+  document.addEventListener('keydown', (e) => {
+    const t = e.target;
+    if (!t.classList?.contains('stay-dest') || sheet.type !== 'where') return;
+    const n = sheet.items.length;
+    if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && n) {
+      e.preventDefault();
+      sheet.active = (sheet.active + (e.key === 'ArrowDown' ? 1 : -1) + n) % n;
+      renderSheet();
+      $('#stay-sheet .dest-item.is-active')?.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (sheet.items[sheet.active]) pickDestination(sheet.items[sheet.active]);
+      else if (sheet.fromBar) openSheet('when', true);
+      else runSearch();
+    }
+  });
+  $('#bar-scrim').addEventListener('click', () => closeSheet({ revert: true }));
+
+  // Sort menu keyboard
+  $('#sort .menu').addEventListener('keydown', (e) => {
+    const opts = $$('#sort [role="option"]');
+    const i = opts.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); opts[(i + (e.key === 'ArrowDown' ? 1 : -1) + opts.length) % opts.length].focus(); }
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); document.activeElement.click(); }
+  });
+
+  // Search dialog keyboard
+  $('#search-input').addEventListener('keydown', (e) => {
+    const n = ($('#search-results').__items || []).length;
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!n) return;
+      searchActive = (searchActive + (e.key === 'ArrowDown' ? 1 : -1) + n) % n;
+      renderSearch();
+      $('.search-item.is-active')?.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter') { e.preventDefault(); pickSearch(searchActive); }
+  });
+
+  // Global shortcuts
+  window.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); $('#search-dialog').hidden ? openSearch() : closeSearch(); return; }
+    if (e.key === 'Escape') {
+      if (!$('#login-dialog').hidden) return closeLogin();
+      if (sheet.type) return closeSheet({ revert: sheet.fromBar });
+      if (!$('#search-dialog').hidden) return closeSearch();
+      if (!$('#account .menu').hidden) { $('#account .menu').hidden = true; return; }
+      if (quickOpen) return closeQuickPop();
+      if (document.body.classList.contains('drawer-open')) return closeDrawer();
+      closePops();
+    }
+  });
+
+  // Carousel dots follow manual swipes (scroll doesn't bubble, so capture it).
+  document.addEventListener('scroll', (e) => {
+    const track = e.target;
+    if (!(track instanceof Element) || !track.classList.contains('carousel-track')) return;
+    const i = Math.round(track.scrollLeft / track.clientWidth);
+    $$('.dot', track.parentElement).forEach((d, j) => d.classList.toggle('is-active', i === j));
+  }, true);
+
+  // Show the header breadcrumb title only while the page heading is hidden under the sticky header(s).
+  let titleObserver;
+  function observeTitle() {
+    titleObserver?.disconnect();
+    const offset = $('.topbar').offsetHeight + ($('.quickbar').offsetHeight || 0);
+    titleObserver = new IntersectionObserver(([entry]) => {
+      const hidden = !entry.isIntersecting && entry.boundingClientRect.top < offset;
+      document.body.classList.toggle('title-hidden', hidden);
+      $$('.crumb-tail, .crumb-pdp').forEach((el) => el.setAttribute('aria-hidden', String(!hidden)));
+    }, { rootMargin: `-${offset}px 0px 0px 0px` });
+    // PLP watches "Hotels in …"; the hotel page watches the hotel name.
+    const heading = document.body.dataset.view === 'pdp' ? $('#pdp-title') : $('#results-heading');
+    if (heading) titleObserver.observe(heading);
+  }
+
+  /* ------------------------------------------------- routing: PLP <-> PDP */
+  // #layout=classic            -> listings
+  // #layout=classic&hotel=<id> -> hotel detail page (browser Back returns to the list)
+  function parseHash() {
+    const p = new URLSearchParams(location.hash.slice(1));
+    return { layout: p.get('layout'), hotel: p.get('hotel') };
+  }
+  const hashFor = ({ layout = state.layout, hotel = null } = {}) => '#layout=' + layout + (hotel ? '&hotel=' + encodeURIComponent(hotel) : '');
+
+  let plpScroll = 0;
+  let pendingSection = null;
+  function goToHotel(id, section = null) {
+    if (CONFIG.noPdp) { toast('Hotel page isn’t part of this prototype'); return; }
+    if (document.body.dataset.view !== 'pdp') plpScroll = window.scrollY;
+    pendingSection = section;
+    location.hash = hashFor({ hotel: id });
+  }
+  const goToResults = () => { location.hash = hashFor(); };
+  function route() {
+    const { hotel } = parseHash();
+    const h = !CONFIG.noPdp && hotel && HOTELS.find((x) => x.id === hotel);
+    closeSheet({ revert: true }); closeDrawer(); closeQuickPop(); closePops();
+    if (h) {
+      const wasPlp = document.body.dataset.view !== 'pdp';
+      document.body.dataset.view = 'pdp';
+      if (wasPlp) state.draft = structuredClone(state.stay);
+      window.PDP.open(h, { section: pendingSection });
+      pendingSection = null;
+      requestAnimationFrame(observeTitle);
+    } else if (document.body.dataset.view === 'pdp') {
+      document.body.dataset.view = 'plp';
+      window.PDP.close();
+      state.draft = structuredClone(state.stay);
+      renderStay();
+      render();
+      requestAnimationFrame(() => { window.scrollTo(0, plpScroll); observeTitle(); });
+    }
+  }
+
+  window.addEventListener('hashchange', () => {
+    const { layout: l } = parseHash();
+    if (l && l !== state.layout && LAYOUTS.includes(l)) setLayout(l);
+    route();
+  });
+  window.addEventListener('resize', () => { positionSheet(); observeTitle(); if (quickOpen) positionQuickPop(); if (!drawerMode()) closeDrawer(); });
+  window.addEventListener('scroll', () => {
+    if (quickOpen) positionQuickPop();
+    positionSheet();
+    document.body.classList.toggle('scrolled', window.scrollY > 4);
+  }, { passive: true });
+
+  /* ---------------------------------------------------------------- init */
+  try { state.user = JSON.parse(localStorage.getItem('onto-user')); } catch {}
+  hydrateIcons();
+  renderAccount();
+  renderAccordion();
+  renderSortMenu();
+  renderStay();
+  const fromHash = parseHash().layout;
+  let saved = null;
+  try { saved = localStorage.getItem('onto-layout'); } catch {}
+  const valid = LAYOUTS;
+  document.body.dataset.view = 'plp';
+  setLayout(valid.includes(fromHash) ? fromHash : valid.includes(saved) ? saved : valid[0], { silent: true });
+  render();
+
+  // Shared helpers for pdp.js
+  window.ONTO = {
+    state, $, $$, icon, esc, inr, inrShort, compact, plural, fmtDay, nightsOf, parseDate, isoDate, DAY,
+    toast, bind, starBadge, renderGuestsChips, openLogin, goToHotel, goToResults,
+  };
+  // pdp.js loads after this file, so handle a direct hotel link once every script has run.
+  document.addEventListener('DOMContentLoaded', route, { once: true });
+})();
+
+</script>
+</body>
+</html>
