@@ -249,6 +249,7 @@ body.bar-open .crumb-tail { opacity: 0; }
 .field-text input::placeholder { color: var(--ink-muted); font-weight: 500; }
 .field-clear { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 999px; color: var(--ink-muted); }
 .field-clear:hover { background: var(--highlight); color: var(--ink-strong); }
+.stay-dest:placeholder-shown + .field-clear { display: none; } /* nothing to clear */
 .field-value { display: flex; flex: 1; min-width: 0; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 1rem; }
 .field .chev { color: var(--ink-strong); transition: transform .2s var(--ease); }
 .field[aria-expanded="true"] .chev { transform: rotate(180deg); }
