@@ -519,6 +519,11 @@ body.drawer-open .layout-switcher, body.search-open .layout-switcher, body.login
 .dest-text b { display: flex; align-items: center; gap: 8px; color: var(--ink-strong); }
 .dest-text em { font-style: normal; font-size: .6875rem; font-weight: 700; padding: 1px 6px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
 .dest-text small { color: var(--ink-muted); font-size: .875rem; }
+/* D: recent searches (mint tile like the live site) */
+.recent-item { gap: 12px; padding: 6px 8px; }
+.recent-tile { flex-shrink: 0; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; background: #99ebd1; color: #0b6b4c; }
+.recent-item .dest-text b { font-size: 1rem; }
+.recent-item .dest-text small { font-size: .8125rem; }
 
 .cal-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
 .cal-head .icon-btn:disabled { opacity: .3; }
@@ -1022,6 +1027,14 @@ window.DESTINATIONS = [
     open: new Set(['price', 'stars']),
     expanded: new Set(),
     favourites: new Set(),
+    // D: recent searches shown when the Where field is emptied (newest first, max 5). Seeded with dummy trips.
+    recent: [
+      structuredClone(initialStay),
+      { destination: 'Goa', checkIn: '2026-11-17', checkOut: '2026-11-19', adults: 2, children: 0, childAges: [], rooms: 1, pets: 0 },
+      { destination: 'Jaipur', checkIn: '2026-11-24', checkOut: '2026-11-26', adults: 2, children: 0, childAges: [], rooms: 1, pets: 0 },
+      { destination: 'Munnar', checkIn: '2026-12-04', checkOut: '2026-12-07', adults: 2, children: 1, childAges: [6], rooms: 1, pets: 0 },
+      { destination: 'Rishikesh', checkIn: '2026-12-12', checkOut: '2026-12-14', adults: 1, children: 0, childAges: [], rooms: 1, pets: 0 },
+    ],
     user: null,
   };
 
@@ -1597,6 +1610,7 @@ window.DESTINATIONS = [
     const exact = onChange ? DESTINATIONS.filter((d) => d.name.toLowerCase() === q) : [];
     const items = exact.length ? exact : DESTINATIONS.filter((d) => !q || `${d.name} ${d.region}`.toLowerCase().includes(q));
     if (!q && !onChange) items.unshift({ name: 'Nearby', nearby: true, blurb: 'Find what’s around you', icon: 'nav', tone: '#2563eb' });
+    if (!q && onChange) return recentHTML();
     sheet.items = items;
     const rows = items.map((d, i) => `
       <button type="button" class="dest-item${i === sheet.active ? ' is-active' : ''}" role="option" aria-selected="${i === sheet.active}" data-dest-index="${i}">
@@ -1605,6 +1619,17 @@ window.DESTINATIONS = [
       </button>`).join('');
     return `<p class="sheet-title">${q ? 'Destinations' : 'Suggested destinations'}</p>
       <div class="dest-list" role="listbox">${rows || `<p class="sheet-empty">No destinations match “${esc(sheet.query || state.draft.destination)}”</p>`}</div>`;
+  }
+
+  // D: an emptied Where field shows recent searches instead of suggestions; picking one restores the whole trip.
+  function recentHTML() {
+    sheet.items = state.recent.slice(0, 5).map((r) => ({ name: r.destination, recent: r }));
+    const rows = sheet.items.map(({ recent: r }, i) => `
+      <button type="button" class="dest-item recent-item${i === sheet.active ? ' is-active' : ''}" role="option" aria-selected="${i === sheet.active}" data-dest-index="${i}">
+        <span class="recent-tile">${icon('pin', 20)}</span>
+        <span class="dest-text"><b>${esc(r.destination)}</b><small>${fmtDay(r.checkIn)} - ${fmtDay(r.checkOut)} · ${plural(r.adults + r.children, 'guest')}</small></span>
+      </button>`).join('');
+    return `<p class="sheet-title">Recent searches</p><div class="dest-list" role="listbox">${rows}</div>`;
   }
 
   function monthHTML(m, compact = false) {
@@ -1707,6 +1732,7 @@ window.DESTINATIONS = [
 
   function pickDestination(item) {
     if (item.nearby) toast('Using your location — showing Udaipur (prototype)');
+    if (item.recent) Object.assign(state.draft, structuredClone(item.recent));
     state.draft.destination = item.nearby ? 'Udaipur' : item.name;
     sheet.query = '';
     $$('.stay-dest').forEach((i) => (i.value = state.draft.destination));
@@ -1900,6 +1926,7 @@ window.DESTINATIONS = [
     closeDrawer();
     const l = $('#listing');
     const onChange = autoSearch();
+    if (onChange) state.recent = [structuredClone(state.stay), ...state.recent.filter((r) => r.destination.toLowerCase() !== state.stay.destination.toLowerCase())].slice(0, 5);
     if (onChange) state.searchSeed = (state.searchSeed || 0) + 1 + Math.floor(Math.random() * 97);
     l.classList.add('is-loading');
     l.setAttribute('aria-busy', 'true');
